@@ -102,6 +102,7 @@
   }
 
   let infoAbierta = {};
+  let guionAbierto = {};
 
   function linkify(text){
     if(!text) return '';
@@ -177,6 +178,42 @@
     render(window.__leads || []);
   };
 
+  window.rlToggleGuion = function(dominio){
+    guionAbierto[dominio] = !guionAbierto[dominio];
+    render(window.__leads || []);
+  };
+
+  function formatearGuion(textoOriginal){
+    if(!textoOriginal) return '';
+    const colorTexto = '#cbd2dc';
+    const colorBorde = 'rgba(255,255,255,0.12)';
+    const patronHeaders = /(ANGULO DE VENTA|MENSAJE DE PRIMER CONTACTO(?:\s*\([^)]*\))?|OBJECIONES PROBABLES)/gi;
+    const infoPorHeader = {
+      'angulo de venta': { icono: '🎯', titulo: 'Ángulo de venta', color: '#7db4ff' },
+      'mensaje de primer contacto': { icono: '💬', titulo: 'Mensaje de primer contacto', color: '#59d98a' },
+      'objeciones probables': { icono: '🛡️', titulo: 'Objeciones probables', color: '#ffd166' }
+    };
+    const partes = textoOriginal.split(patronHeaders);
+    if(partes.length < 2){
+      return `<p style="color:${colorTexto}; line-height:1.65;">${linkify(textoOriginal.trim())}</p>`;
+    }
+    let html = '';
+    if(partes[0] && partes[0].trim()) html += `<p style="margin-bottom:14px; color:${colorTexto}; line-height:1.6;">${linkify(partes[0].trim())}</p>`;
+    for(let i=1; i<partes.length; i+=2){
+      const clave = partes[i].toLowerCase().replace(/\s*\([^)]*\)/,'').trim();
+      const contenido = (partes[i+1]||'').trim();
+      const info = infoPorHeader[clave] || { icono: '📌', titulo: partes[i], color: '#9ca3af' };
+      html += `<div style="margin-bottom:18px;">
+        <div style="margin-bottom:8px;">
+          <span style="font-size:13px;">${info.icono}</span>
+          <span style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.07em; color:${info.color};">&nbsp;${info.titulo}</span>
+        </div>
+        <div style="color:${colorTexto}; line-height:1.65; padding-left:12px; border-left:2px solid ${colorBorde};">${linkify(contenido)}</div>
+      </div>`;
+    }
+    return html;
+  }
+
   function render(leads){
     const cont = document.getElementById('lista');
     const leadsAMostrar = agenciaFiltro ? leads.filter(c => c.agencia_asignada === agenciaFiltro) : leads;
@@ -186,6 +223,7 @@
     }
     cont.innerHTML = leadsAMostrar.map(c => {
       const verInfo = !!infoAbierta[c.dominio];
+      const verGuion = !!guionAbierto[c.dominio];
       let detalleHtml = '';
       if(verInfo){
         const filas = [];
@@ -203,6 +241,7 @@
         if(c.nota_calificacion) filas.push(`<div><span style="color:#6b7280;">Nota:</span> ${c.nota_calificacion}</div>`);
         detalleHtml = `<div class="rl-detail">${filas.join('') || 'Sin información adicional.'}</div>`;
       }
+      const guionHtml = (verGuion && c.guion) ? `<div class="rl-detail">${formatearGuion(c.guion)}</div>` : '';
       return `<div class="rl-row">
         <div class="rl-row-top">
           <div class="rl-brand">
@@ -221,9 +260,11 @@
           </div>
           <div class="rl-actions">
             <button class="rl-btn" onclick="rlToggleInfo('${c.dominio}')">${verInfo?'Ocultar':'Más'} info</button>
+            ${c.guion ? `<button class="rl-btn" onclick="rlToggleGuion('${c.dominio}')">${verGuion?'Ocultar':'Ver'} guion</button>` : ''}
           </div>
         </div>
         ${detalleHtml}
+        ${guionHtml}
       </div>`;
     }).join('');
   }
