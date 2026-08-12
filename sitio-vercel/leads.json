@@ -2,21 +2,6 @@
   "actualizado": "12 de agosto de 2026",
   "leads": [
     {
-      "dominio": "damboa.mx",
-      "marca": "Damboa",
-      "facturacion_estimada_mxn": 420000,
-      "plataforma": "Shopify",
-      "estado": "Nuevo",
-      "agencia_asignada": "",
-      "contacto_nombre": "",
-      "contacto_cargo": "",
-      "contacto_telefono": "",
-      "contacto_correo": "",
-      "contacto_linkedin": "",
-      "nota_calificacion": "49K seguidores en Instagram (@damboamx), tienda de joyería de acero inoxidable y plata .925, envíos gratis a todo México en compras mayores $1,299. Facturación estimada con base en comunidad y segmento precio medio (~$500 MXN ticket): ~420K MXN/mes.",
-      "ads_activos": "Meta: presencia activa en Instagram/Facebook (49K seguidores IG, 546 posts); TikTok: no encontrado; Google: no encontrado"
-    },
-    {
       "dominio": "morenacorazon.com",
       "marca": "Morena Corazón",
       "facturacion_estimada_mxn": 1200000,
@@ -135,6 +120,51 @@
       "contacto_linkedin": "",
       "nota_calificacion": "Editorial estatal fundada en 1934, +10,000 obras publicadas, 27 librerías en México y 8 subsidiarias internacionales. +2,000 títulos en catálogo digital. Financiamiento parcial del gobierno mexicano. Facturación estimada con base en red de 27 librerías y operación institucional: ~12M MXN/mes. Nota: VTEX inferido por integración omnicanal similar a Gandhi; puede usar plataforma propia.",
       "ads_activos": "Meta: presencia institucional activa; TikTok: no encontrado; Google: probable"
+    },
+    {
+      "dominio": "damboa.mx",
+      "marca": "Damboa Joyería",
+      "facturacion_estimada_mxn": 825000,
+      "plataforma": "Shopify",
+      "estado": "Nuevo",
+      "agencia_asignada": "",
+      "contacto_nombre": "Amanda Orozco",
+      "contacto_cargo": "Fundadora",
+      "contacto_telefono": "",
+      "contacto_correo": "info@damboa.mx",
+      "contacto_linkedin": "",
+      "nota_calificacion": "D2C de joyería acero inoxidable + baño de oro desde Guadalajara; ~49K seguidores Instagram; crecimiento exponencial durante pandemia; equipo 100% femenino. Facturación estimada conservadora basada en seguidores vs. escala de Chabacano (190K). Sin tráfico Semrush/SimilarWeb disponible para este dominio.",
+      "ads_activos": "Meta: no confirmado directamente en biblioteca pública; TikTok: no encontrado; Google: no encontrado"
+    },
+    {
+      "dominio": "mljoyas.com.mx",
+      "marca": "ML Joyas",
+      "facturacion_estimada_mxn": 1500000,
+      "plataforma": "Shopify",
+      "estado": "Nuevo",
+      "agencia_asignada": "",
+      "contacto_nombre": "",
+      "contacto_cargo": "",
+      "contacto_telefono": "443 314 8033",
+      "contacto_correo": "",
+      "contacto_linkedin": "",
+      "nota_calificacion": "Marca de Michoacán fundada en 2010; 4+ sucursales físicas (Morelia, Uruapan, Pátzcuaro, Querétaro) + tienda online + expansión a EUA (Austin TX); 25K seguidores Instagram. Facturación estimada basada en múltiples puntos de venta físicos + online. Sin Semrush/SimilarWeb disponible para este dominio.",
+      "ads_activos": "Meta: no confirmado; TikTok: presencia orgánica (@mljoyasmx 25K seg), ads no confirmados; Google: no encontrado"
+    },
+    {
+      "dominio": "ginebrajoyeria.mx",
+      "marca": "Ginebra Joyería",
+      "facturacion_estimada_mxn": 3500000,
+      "plataforma": "Shopify",
+      "estado": "Nuevo",
+      "agencia_asignada": "",
+      "contacto_nombre": "",
+      "contacto_cargo": "",
+      "contacto_telefono": "+52 33 4329 9454",
+      "contacto_correo": "contacto.ginebrajoyeria@gmail.com",
+      "contacto_linkedin": "",
+      "nota_calificacion": "La marca más grande del grupo: 265K seguidores Instagram + 228.7K TikTok + 4.2M likes TikTok; tienda física en Guadalajara (Av. Providencia 2411) + envíos a todo México. Facturación estimada con base en 2% conversión × ~250K alcance activo × ticket ~$700 MXN. Sin Semrush disponible para este dominio (cuenta corporativa sin unidades API suficientes).",
+      "ads_activos": "Meta: presencia activa en Facebook (página confirmada); TikTok: cuenta activa @ginebrajoyeria con 228K seguidores y 4.2M likes, ads probables; Google: no confirmado"
     }
   ]
 }
