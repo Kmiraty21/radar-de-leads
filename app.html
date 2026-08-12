@@ -1,0 +1,1259 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; }
+  #radar-root {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: radial-gradient(ellipse at 12% -10%, #0050c4 0%, #000b19 42%, #000b19 100%);
+    color: #ffffff;
+    min-height: 100%;
+    padding: 0 0 60px;
+  }
+  #radar-root .mono { font-family: 'JetBrains Mono', monospace; }
+  #radar-root a { color: #7db4ff; }
+  .rl-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .rl-header, .rl-title-block-visible, .rl-seeds, #rl-export-area, .rl-summary, .rl-table-wrap, .rl-note {
+    max-width: 1200px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 24px;
+    padding-right: 24px;
+    box-sizing: border-box;
+  }
+
+  .rl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+    padding-top: 18px; padding-bottom: 18px;
+    flex-wrap: wrap;
+    background: rgba(0, 11, 25, 0.6);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0 0 16px 16px;
+  }
+  .rl-header__brand { display: flex; align-items: center; gap: 0.7rem; }
+  .rl-wordmark { width: 100px; height: 25px; color: #ffffff; display: block; flex-shrink: 0; }
+  .rl-header__tag {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #9ca3af; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 0.6rem;
+  }
+  .rl-header__status { display: none; }
+  .rl-title-block { display: none; }
+  .rl-hero-pill {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em;
+    color: #7db4ff; background: rgba(0,80,195,0.15); border: 1px solid rgba(0,80,195,0.35);
+    padding: 0.4rem 0.9rem; border-radius: 100px; margin: 0 auto 1.3rem; display: table;
+  }
+  .rl-title-block-visible { margin-bottom: 30px; text-align: center; }
+  .rl-title-block-visible h1 {
+    font-size: clamp(28px, 4.5vw, 42px);
+    font-weight: 800;
+    margin: 0 auto 10px;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    color: #ffffff;
+    max-width: 720px;
+  }
+  .rl-title-block-visible h1 em {
+    font-family: 'Georgia', serif; font-style: italic; font-weight: 400;
+    background: linear-gradient(120deg, #7db4ff, #59d98a);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .rl-title-block-visible p { margin: 0 auto; color: #9ca3af; font-size: 14px; max-width: 480px; }
+  .rl-pulse {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #59d98a;
+    box-shadow: 0 0 0 0 rgba(89,217,138,0.6);
+    animation: rl-pulse 2s infinite;
+  }
+  @keyframes rl-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(89,217,138,0.5); }
+    70% { box-shadow: 0 0 0 9px rgba(89,217,138,0); }
+    100% { box-shadow: 0 0 0 0 rgba(89,217,138,0); }
+  }
+
+  .rl-control-cluster { max-width: 640px; margin: 0 auto; }
+  .rl-seeds-header { text-align: center; margin-bottom: 16px; }
+  .rl-seeds-title {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 15px; font-weight: 700; color: #ffffff; margin-bottom: 6px;
+  }
+  .rl-seeds-title::before { content: '🔍'; font-size: 14px; }
+  .rl-seeds-help { font-size: 11.5px; color: #6b7280; line-height: 1.5; }
+  .rl-search-bubble {
+    display: flex; gap: 8px; align-items: center;
+    margin: 0 auto 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    border-radius: 100px;
+    padding: 6px 6px 6px 18px;
+  }
+  .rl-search-bubble input {
+    flex: 1; min-width: 0;
+    border: none; background: transparent; color: #fff;
+    font-size: 12.5px; font-family: 'JetBrains Mono', monospace;
+    padding: 8px 0;
+  }
+  .rl-search-bubble input:focus { outline: none; }
+  .rl-search-bubble input::placeholder { color: #6b7280; }
+  .rl-control-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 22px; flex-wrap: wrap; }
+  .rl-btn-solid-neutral {
+    background: linear-gradient(135deg, #37415c, #4a5578);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .rl-btn-solid-danger {
+    background: linear-gradient(135deg, #d64545, #e2695f);
+    box-shadow: 0 4px 14px rgba(214,69,69,0.35);
+  }
+  .rl-btn-solid-danger:hover { box-shadow: 0 6px 20px rgba(214,69,69,0.5); }
+  .rl-seeds {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(14px);
+    border-radius: 22px;
+    padding-top: 20px; padding-bottom: 20px;
+    margin-bottom: 18px;
+  }
+  .rl-seeds label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #cbd2dc;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .rl-seeds-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .rl-seeds input {
+    flex: 1;
+    min-width: 240px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #ffffff;
+    background: rgba(0,0,0,0.15);
+  }
+  .rl-seeds input::placeholder { color: #6b7280; }
+  .rl-seeds input:focus { outline: 2px solid #3d7fe0; outline-offset: 1px; }
+
+  .rl-btn {
+    background: linear-gradient(135deg, #0050c3, #3d7fe0);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 11px 20px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0,80,195,0.35);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .rl-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 20px rgba(61,127,224,0.5); }
+  .rl-btn:active { transform: translateY(0) scale(0.98); }
+  .rl-btn:disabled { background: #37415c; color: #8a96b3; cursor: wait; transform: none; box-shadow: none; }
+  .rl-btn.secondary {
+    background: rgba(255,255,255,0.05);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: none;
+  }
+  .rl-btn.secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); box-shadow: 0 4px 14px rgba(255,255,255,0.08); }
+  .rl-btn.small { padding: 7px 14px; font-size: 12px; border-radius: 100px; }
+  .rl-btn.danger { background: transparent; color: #ff9494; border: 1px solid rgba(255,107,107,0.35); box-shadow: none; }
+  .rl-btn.danger:hover { background: rgba(255,107,107,0.1); box-shadow: 0 4px 14px rgba(255,107,107,0.15); }
+
+  .rl-summary { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; justify-content: center; }
+  .rl-chip {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    padding: 10px 16px; font-size: 12px; color: #9ca3af; font-weight: 600;
+    backdrop-filter: blur(8px);
+  }
+  .rl-chip b { color: #ffffff; font-size: 16px; display: block; font-weight: 800; }
+  .rl-chip.alert { border-color: rgba(255,107,107,0.4); background: rgba(255,107,107,0.08); }
+  .rl-chip.alert b { color: #ff9494; }
+  .rl-chip-click { cursor: pointer; transition: all 0.2s; }
+  .rl-chip-click:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25); }
+  .rl-chip-click.activo { background: rgba(0,80,195,0.18); border-color: #3d7fe0; }
+  .rl-chip-click.activo b { color: #7db4ff; }
+
+  .rl-table-wrap {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .rl-row {
+    background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+    padding: 18px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+  }
+  .rl-row:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
+  .rl-row.overdue { background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.3); border-left: 3px solid #ff6b6b; }
+
+  .rl-row-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  }
+  .rl-brand { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+  .rl-avatar {
+    width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #0050c3, #3d7fe0); color: white;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .rl-brand-name { font-weight: 700; font-size: 14.5px; color: #ffffff; }
+  .rl-domain { font-size: 12px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+
+  .rl-meta { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+  .rl-meta-item { font-size: 12px; color: #9ca3af; }
+  .rl-meta-item b { color: #ffffff; font-weight: 700; }
+
+  .rl-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700;
+  }
+  .rl-badge.plat-none { background: rgba(255,167,122,0.14); color: #ffb27a; }
+  .rl-badge.plat-custom { background: rgba(255,107,107,0.14); color: #ff9494; }
+  .rl-badge.plat-shopify { background: rgba(89,217,138,0.14); color: #6be3a0; }
+  .rl-badge.plat-vtex { background: rgba(255,105,180,0.16); color: #ff8fc4; }
+  .rl-badge.plat-woocommerce { background: rgba(160,100,255,0.16); color: #b892ff; }
+  .rl-badge.plat-other { background: rgba(255,255,255,0.08); color: #b8c0cc; }
+  .rl-badge.plat-unknown { background: rgba(255,255,255,0.06); color: #6b7280; }
+  .rl-badge.estado-nuevo { background: rgba(0,80,195,0.18); color: #7db4ff; }
+  .rl-badge.estado-asignado { background: rgba(255,209,102,0.14); color: #ffd166; }
+  .rl-badge.estado-descartado { background: rgba(255,255,255,0.06); color: #6b7280; }
+  .rl-badge.estado-enviado { background: rgba(89,217,138,0.14); color: #6be3a0; }
+
+  .rl-days { font-weight: 800; }
+  .rl-days.late { color: #ff6b6b; }
+
+  .rl-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .rl-detail {
+    margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,0.12);
+    font-size: 13px; line-height: 1.6; color: #cbd2dc; white-space: pre-wrap;
+  }
+  .rl-assign-form { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+  .rl-assign-form input, .rl-assign-form select {
+    border: 1px solid rgba(255,255,255,0.16); border-radius: 8px; padding: 7px 10px; font-size: 12.5px; flex: 1; min-width: 160px;
+    background: rgba(0,0,0,0.3); color: #ffffff;
+  }
+  .rl-assign-form select option { color: #14213D; }
+
+  .rl-empty {
+    text-align: center; padding: 60px 20px; color: #6b7280;
+  }
+  .rl-empty svg { margin-bottom: 12px; opacity: 0.5; }
+
+  .rl-spin {
+    width: 13px; height: 13px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+    display: inline-block; animation: rl-spin 0.7s linear infinite; margin-right: 6px; vertical-align: -2px;
+  }
+  @keyframes rl-spin { to { transform: rotate(360deg); } }
+
+  .rl-note { font-size: 11.5px; color: #6b7280; margin-top: 14px; line-height: 1.5; }
+
+  #rl-export-textarea { background: rgba(0,0,0,0.3); color: #cbd2dc; }
+
+  .rl-track-title { font-size: 15px; font-weight: 800; color: #ffffff; margin: 32px 24px 12px; }
+  .rl-track-title span { color: #9ca3af; font-weight: 600; font-size: 12.5px; margin-left: 8px; }
+  .rl-track-wrap {
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px;
+    overflow-x: auto; max-width: 1200px; margin: 0 auto 18px; padding: 0 24px;
+  }
+  .rl-track-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 640px; }
+  .rl-track-table th {
+    text-align: left; padding: 12px 14px; color: #7db4ff; font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.1);
+    white-space: nowrap;
+  }
+  .rl-track-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #cbd2dc; vertical-align: top; }
+  .rl-track-table tr:last-child td { border-bottom: none; }
+  .rl-track-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .rl-track-brand { color: #ffffff; font-weight: 700; }
+  .rl-track-domain { color: #6b7280; font-size: 11px; display: block; }
+  .rl-track-empty { padding: 30px 24px; text-align: center; color: #6b7280; font-size: 13px; }
+  .rl-mail-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 10.5px; font-weight: 700; }
+  .rl-mail-pill.si { background: rgba(89,217,138,0.14); color: #6be3a0; }
+  .rl-mail-pill.no { background: rgba(255,255,255,0.06); color: #6b7280; }
+  .rl-mail-pill.error { background: rgba(255,107,107,0.14); color: #ff9494; }
+</style>
+
+<div id="radar-root">
+  <div class="rl-header">
+    <div class="rl-header__brand">
+      <svg class="rl-wordmark" viewBox="0 0 160 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TiendaNube">
+        <path d="M51.4723 19.5098V7.49283H54.3653V19.5098H51.4723ZM67.3608 10.8394C67.0958 10.1395 66.7119 9.51774 66.2124 8.97244C65.7113 8.42714 65.1048 8.00076 64.3897 7.69158C63.6745 7.38241 62.8472 7.22782 61.9044 7.22782C60.7849 7.22782 59.7725 7.49962 58.867 8.04492C57.9616 8.59022 57.2464 9.32918 56.7249 10.2652C56.2017 11.2012 55.9401 12.2714 55.9401 13.4792C55.9401 14.6871 56.1983 15.7029 56.713 16.6593C57.2277 17.6174 57.9497 18.375 58.8772 18.9339C59.8047 19.4945 60.8868 19.7731 62.1235 19.7731C62.9474 19.7731 63.7034 19.6474 64.388 19.3977C65.0726 19.148 65.6654 18.8014 66.1666 18.3598C66.6677 17.9181 67.0346 17.4102 67.2708 16.836L64.9299 15.6876C64.6649 16.1599 64.2996 16.5353 63.8359 16.8139C63.3721 17.0942 62.8081 17.2335 62.1456 17.2335C61.4831 17.2335 60.897 17.0789 60.3891 16.7697C59.8812 16.4606 59.4973 16.0223 59.2407 15.4549C59.0828 15.1083 58.9842 14.7278 58.9452 14.3167H67.6003C67.6598 14.1553 67.6988 13.9634 67.7209 13.7425C67.743 13.5217 67.7549 13.3077 67.7549 13.1021C67.7549 12.2918 67.6224 11.5376 67.3574 10.8377L67.3608 10.8394ZM60.2923 10.0664C60.7628 9.76406 61.3013 9.61287 61.9044 9.61287C62.5075 9.61287 63.0782 9.76746 63.5284 10.0766C63.9769 10.3858 64.3013 10.8054 64.5001 11.3354C64.5901 11.5766 64.6445 11.8348 64.6666 12.1083H59.008C59.0573 11.8518 59.1269 11.6123 59.2204 11.3898C59.4633 10.8088 59.82 10.3671 60.2923 10.0647V10.0664ZM79.3744 9.40393C78.9922 8.71933 78.4571 8.18592 77.7725 7.802C77.0879 7.41978 76.303 7.22782 75.4197 7.22782C74.5363 7.22782 73.8178 7.41639 73.1773 7.79181C72.683 8.0823 72.2974 8.47641 72.0171 8.97244V7.49453H69.3008V19.5115H72.1937V12.4651C72.1937 11.9351 72.2974 11.4781 72.5029 11.0959C72.7085 10.7137 72.9956 10.4147 73.3642 10.2006C73.7328 9.9866 74.1524 9.87958 74.623 9.87958C75.0935 9.87958 75.5318 9.9866 75.8936 10.2006C76.2538 10.4147 76.5375 10.712 76.7447 11.0959C76.9503 11.4798 77.0539 11.9351 77.0539 12.4651V19.5115H79.9469V11.7805C79.9469 10.8818 79.7549 10.0902 79.3727 9.40563L79.3744 9.40393ZM91.1824 2.98434V8.70914C90.8359 8.33031 90.4214 8.01605 89.9338 7.76973C89.2187 7.40959 88.4067 7.22782 87.4927 7.22782C86.358 7.22782 85.3319 7.50812 84.4112 8.06701C83.4905 8.6276 82.7651 9.37845 82.2351 10.3196C81.7051 11.2624 81.4401 12.3224 81.4401 13.4996C81.4401 14.6769 81.7051 15.7233 82.2351 16.6797C82.7651 17.6378 83.4871 18.392 84.3993 18.9441C85.3115 19.4962 86.3512 19.7731 87.5131 19.7731C88.3812 19.7731 89.1847 19.5999 89.9202 19.2533C90.4876 18.9866 90.9582 18.6282 91.3336 18.1814V19.5064H94.072V2.98434H91.179H91.1824ZM90.7526 15.3784C90.4655 15.9237 90.0714 16.3501 89.5703 16.6593C89.0692 16.9685 88.4882 17.1231 87.8257 17.1231C87.1632 17.1231 86.5958 16.9685 86.0811 16.6593C85.5646 16.3501 85.1637 15.9237 84.8766 15.3784C84.5896 14.8331 84.4452 14.208 84.4452 13.5013C84.4452 12.7946 84.5896 12.1729 84.8766 11.6344C85.1637 11.0976 85.5646 10.6695 86.0811 10.3535C86.5958 10.0376 87.1785 9.87788 87.8257 9.87788C88.4729 9.87788 89.0692 10.0325 89.5703 10.3416C90.0714 10.6508 90.4655 11.0823 90.7526 11.6344C91.0397 12.1865 91.1841 12.8082 91.1841 13.5013C91.1841 14.1944 91.0397 14.8348 90.7526 15.3784ZM105.737 9.27142C105.318 8.63099 104.732 8.12986 103.981 7.76973C103.23 7.40959 102.36 7.22782 101.375 7.22782C100.565 7.22782 99.8138 7.36033 99.1224 7.62533C98.4293 7.89034 97.8296 8.25557 97.3217 8.71933C96.8138 9.18309 96.4418 9.73179 96.2056 10.3654L98.5686 11.5138C98.7894 10.9685 99.1394 10.5302 99.6184 10.1989C100.097 9.86769 100.646 9.70121 101.265 9.70121C101.927 9.70121 102.46 9.87448 102.866 10.221C103.271 10.5676 103.475 10.9974 103.475 11.5138V11.9028L99.897 12.4855C98.9542 12.6333 98.1745 12.883 97.5562 13.2363C96.9378 13.5897 96.4808 14.0279 96.1869 14.5512C95.8914 15.0744 95.7453 15.6672 95.7453 16.3297C95.7453 16.9923 95.9151 17.6293 96.2532 18.1525C96.5913 18.6757 97.0703 19.0766 97.6886 19.3569C98.307 19.6372 99.0358 19.7765 99.8749 19.7765C100.537 19.7765 101.141 19.6848 101.686 19.4996C102.231 19.3162 102.717 19.0512 103.143 18.7046C103.317 18.5653 103.476 18.4073 103.629 18.2408V19.5115H106.368V11.5155C106.368 10.661 106.157 9.91355 105.737 9.27312V9.27142ZM103.086 16.1072C102.827 16.5642 102.467 16.9209 102.003 17.1791C101.54 17.4373 101.006 17.5664 100.402 17.5664C99.9293 17.5664 99.5369 17.4458 99.2192 17.2012C98.9016 16.9583 98.7436 16.6304 98.7436 16.2176C98.7436 15.8048 98.8829 15.4447 99.1632 15.1797C99.4435 14.9147 99.8699 14.7312 100.444 14.6276L103.47 14.1129V14.6055C103.47 15.1508 103.34 15.6519 103.082 16.1072H103.086ZM118.716 9.40393C118.334 8.71933 117.798 8.18592 117.114 7.802C116.429 7.41978 115.644 7.22782 114.761 7.22782C113.878 7.22782 113.159 7.41639 112.519 7.79181C112.024 8.0823 111.639 8.47641 111.359 8.97244V7.49453H108.642V19.5115H111.535V12.4651C111.535 11.9351 111.639 11.4781 111.844 11.0959C112.05 10.7137 112.337 10.4147 112.706 10.2006C113.074 9.9866 113.494 9.87958 113.964 9.87958C114.435 9.87958 114.873 9.9866 115.235 10.2006C115.595 10.4147 115.879 10.712 116.086 11.0959C116.292 11.4798 116.395 11.9351 116.395 12.4651V19.5115H119.288V11.7805C119.288 10.8818 119.096 10.0902 118.714 9.40563L118.716 9.40393ZM126.661 19.7748C125.614 19.7748 124.69 19.5642 123.889 19.1446C123.085 18.725 122.463 18.1389 122.022 17.3881C121.58 16.6372 121.359 15.7675 121.359 14.7822V7.49283H124.252V14.6938C124.252 15.1797 124.356 15.6078 124.561 15.9747C124.767 16.3433 125.054 16.627 125.423 16.8258C125.791 17.0245 126.211 17.1248 126.681 17.1248C127.152 17.1248 127.59 17.0262 127.952 16.8258C128.312 16.627 128.596 16.3433 128.803 15.9747C129.009 15.6061 129.112 15.1797 129.112 14.6938V7.49283H132.005V14.7822C132.005 15.7692 131.781 16.6372 131.331 17.3881C130.881 18.1389 130.259 18.725 129.464 19.1446C128.669 19.5642 127.733 19.7748 126.659 19.7748H126.661ZM146.11 10.3196C145.571 9.37675 144.848 8.6259 143.934 8.06701C143.02 7.50812 141.997 7.22782 140.864 7.22782C139.937 7.22782 139.12 7.40789 138.413 7.76973C137.932 8.01605 137.521 8.32862 137.176 8.70744V2.98434H134.283V19.5098H137V18.1474C137.387 18.6112 137.869 18.9815 138.447 19.255C139.176 19.6015 139.974 19.7748 140.844 19.7748C142.007 19.7748 143.045 19.4979 143.958 18.9458C144.87 18.3937 145.592 17.6395 146.122 16.6814C146.652 15.725 146.917 14.6633 146.917 13.5013C146.917 12.3394 146.648 11.2624 146.11 10.3213V10.3196ZM143.482 15.3784C143.195 15.9237 142.794 16.3501 142.278 16.6593C141.761 16.9685 141.173 17.1231 140.511 17.1231C139.848 17.1231 139.306 16.9685 138.799 16.6593C138.291 16.3501 137.893 15.9237 137.606 15.3784C137.319 14.8331 137.174 14.208 137.174 13.5013C137.174 12.7946 137.319 12.1865 137.606 11.6344C137.893 11.0823 138.291 10.6508 138.799 10.3416C139.306 10.0325 139.877 9.87788 140.511 9.87788C141.144 9.87788 141.763 10.0359 142.278 10.3535C142.792 10.6712 143.195 11.0976 143.482 11.6344C143.769 12.1729 143.913 12.7946 143.913 13.5013C143.913 14.208 143.769 14.8348 143.482 15.3784ZM159.291 10.8394C159.026 10.1395 158.642 9.51774 158.142 8.97244C157.641 8.42714 157.035 8.00076 156.319 7.69158C155.604 7.38241 154.777 7.22782 153.834 7.22782C152.715 7.22782 151.702 7.49962 150.797 8.04492C149.891 8.59022 149.176 9.32918 148.655 10.2652C148.131 11.2012 147.87 12.2714 147.87 13.4792C147.87 14.6871 148.128 15.7029 148.643 16.6593C149.158 17.6174 149.879 18.375 150.807 18.9339C151.735 19.4945 152.817 19.7731 154.053 19.7731C154.877 19.7731 155.633 19.6474 156.318 19.3977C157.002 19.148 157.595 18.8014 158.096 18.3598C158.597 17.9181 158.964 17.4102 159.201 16.836L156.86 15.6876C156.595 16.1599 156.229 16.5353 155.766 16.8139C155.302 17.0942 154.738 17.2335 154.075 17.2335C153.413 17.2335 152.827 17.0789 152.319 16.7697C151.811 16.4606 151.427 16.0223 151.171 15.4549C151.013 15.1083 150.914 14.7278 150.875 14.3167H159.53C159.59 14.1553 159.629 13.9634 159.651 13.7425C159.673 13.5217 159.685 13.3077 159.685 13.1021C159.685 12.2918 159.552 11.5376 159.287 10.8377L159.291 10.8394ZM152.392 10.0664C152.862 9.76406 153.401 9.61287 154.004 9.61287C154.607 9.61287 155.178 9.76746 155.628 10.0766C156.077 10.3858 156.401 10.8054 156.6 11.3354C156.69 11.5766 156.746 11.8348 156.766 12.1083H151.108C151.157 11.8518 151.227 11.6123 151.32 11.3898C151.563 10.8088 151.92 10.3671 152.392 10.0647V10.0664ZM48.0035 7.50302V4.11061H45.1241V7.50302H43.1094V10.0766H45.1241V19.5081H48.0035V10.0766H50.0182V7.50302H48.0035ZM52.9316 2.41016C51.9922 2.41016 51.2311 3.1712 51.2311 4.11061C51.2311 5.05002 51.9922 5.81106 52.9316 5.81106C53.871 5.81106 54.632 5.05002 54.632 4.11061C54.632 3.1712 53.871 2.41016 52.9316 2.41016Z"></path><path d="M24.0068 0H23.9915C23.9915 0 23.983 0 23.9779 0C20.4547 0.00509626 17.098 1.38958 14.5923 3.82559C13.3097 3.28199 11.9287 3 10.5017 3C4.71065 3 0 7.71065 0 13.5C0 19.2894 4.71065 24 10.5 24C11.9049 24 13.2945 23.7129 14.5804 23.1727C17.013 25.5391 20.3307 27 23.9847 27C31.4287 27 37.4847 20.9439 37.4847 13.5C37.4847 6.05606 31.4405 0.0118913 24.0068 0ZM23.9847 24C18.1954 24 13.4847 19.2894 13.4847 13.5H10.4847C10.4847 16.1484 11.2542 18.6183 12.5759 20.7044C11.9032 20.8981 11.205 21 10.5 21C6.36523 21 3 17.6348 3 13.5C3 9.36523 6.36523 6 10.5 6C12.1376 6 13.6937 6.51812 14.9983 7.4983C16.906 8.93035 18 11.1183 18 13.5H21C21 10.359 19.6393 7.45923 17.2491 5.4581C19.1263 3.88335 21.5062 3.0017 23.9915 3C29.7775 3.0034 34.483 7.71234 34.483 13.5C34.483 19.2877 29.7724 24 23.983 24H23.9847Z"></path>
+      </svg>
+      <span class="rl-header__tag">Radar de Leads</span>
+    </div>
+  </div>
+
+  <div class="rl-title-block-visible">
+    <div class="rl-hero-pill"><span class="rl-pulse"></span> Radar activo · Investigación en vivo</div>
+    <h1>Encuentra a tu próximo <em>gran cliente</em></h1>
+    <p>Marcas mexicanas ya pautando, listas para asignar.</p>
+  </div>
+
+  <div class="rl-control-cluster">
+    <div class="rl-seeds-header">
+      <div class="rl-seeds-title">Dominios semilla</div>
+      <div class="rl-seeds-help">Marcas mexicanas del mismo giro, separadas por coma — hasta 3 leads por semilla, se descartan los sin contacto.</div>
+    </div>
+    <div class="rl-search-bubble">
+      <input id="rl-seeds-input" class="mono" value="chabacano.mx, speediance.com.mx, gandhi.com.mx" />
+      <button class="rl-btn" id="rl-buscar-btn" onclick="rlBuscarCandidatos()">Buscar candidatos</button>
+    </div>
+
+    <div class="rl-control-row">
+      <button class="rl-btn rl-btn-solid-neutral" onclick="rlToggleDistribuir()" id="rl-distribuir-btn">Distribuir entre agencias</button>
+      <button class="rl-btn rl-btn-solid-neutral" onclick="rlSincronizarPipeline()" id="rl-sincronizar-btn">Sincronizar pipeline desde Sheet</button>
+      <button class="rl-btn rl-btn-solid-neutral" id="rl-sync-btn" onclick="rlExportarCSV()">Exportar para pegar en Sheets</button>
+      <button class="rl-btn rl-btn-solid-neutral" id="rl-export-json-btn" onclick="rlExportarJSON()">Exportar JSON para Vercel</button>
+      <button class="rl-btn rl-btn-solid-danger" id="rl-reiniciar-btn" onclick="rlReiniciar()" title="Borra todo lo guardado aqui: nuevos, asignados y descartados">Reiniciar</button>
+    </div>
+
+    <div id="rl-distribuir-panel" style="display:none;"></div>
+
+    <div id="rl-export-area" style="display:none; margin-bottom:18px;">
+      <label id="rl-export-label" style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#5B6B8C; display:block; margin-bottom:8px;">Selecciona todo (clic + Ctrl/Cmd+A) y copia — luego pega en la primera celda vacía de tu Sheet</label>
+      <textarea id="rl-export-textarea" readonly style="width:100%; height:140px; font-family:'JetBrains Mono',monospace; font-size:11px; border:1px solid #D7DEEC; border-radius:9px; padding:10px;"></textarea>
+    </div>
+
+    <div class="rl-summary" id="rl-summary"></div>
+  </div>
+
+  <div class="rl-table-wrap" id="rl-table-wrap"></div>
+
+  <div id="rl-tracking-section"></div>
+
+  <div class="rl-note">Facturación estimada = visitas mensuales × 2% de conversión × $900 MXN de ticket promedio (supuestos típicos de e-commerce MX, ajusta si tu giro es distinto). Ads activos y % de tráfico pagado vienen de búsqueda pública, no de acceso directo a Meta/Google — pueden no encontrarse siempre. La detección de plataforma y el contacto ejecutivo son señales automáticas, confirma a ojo antes de asignar.</div>
+</div>
+
+<script>
+(function(){
+  let candidatos = [];
+  let cargando = false;
+  let panelAbierto = {}; // por dominio: null | 'guion' | 'asignar'
+  let guionCargando = {};
+  let borradorEstado = {};
+  let filtroActivo = 'nuevo'; // 'nuevo' | 'asignado' | 'atrasado'
+  let filtroAgenciaTabla = 'todas';
+
+  const AGENCIAS = [
+    'We love carts', 'Suma', 'Codefy', 'Estudio Merca', 'Kreads', 'Cocktail Marketing',
+    'reevolution', 'Fideliza', 'Ene Conceptos', 'Galarreta', 'Easyclicks', 'btiq digital',
+    'Velstudio', 'Rífatela', 'Colorify MX'
+  ];
+
+  // Correos reales de cada agencia. Ve agregando aqui conforme los tengas; sin correo, el boton de borrador avisa que falta.
+  const AGENCIA_CORREOS = {
+    'Colorify MX': 'Colorify.mx@gmail.com'
+  };
+
+  const UMBRAL_GASTO = 300;
+  const SLA_DIAS = 5;
+
+  async function init(){
+    try {
+      const r = await window.storage.get('rl_candidatos');
+      candidatos = r ? JSON.parse(r.value) : [];
+    } catch(e) { candidatos = []; }
+    render();
+  }
+
+  let reiniciarArmado = false;
+  window.rlReiniciar = async function(){
+    const btn = document.getElementById('rl-reiniciar-btn');
+    if(!reiniciarArmado){
+      reiniciarArmado = true;
+      btn.textContent = '¿Seguro? Clic otra vez para borrar';
+      setTimeout(()=>{ reiniciarArmado = false; if(btn) btn.textContent = 'Reiniciar (borrar todo lo guardado aqui)'; }, 4000);
+      return;
+    }
+    reiniciarArmado = false;
+    candidatos = [];
+    panelAbierto = {};
+    filtroActivo = 'nuevo';
+    filtroAgenciaTabla = 'todas';
+    borradorEstado = {};
+    await guardar();
+    render();
+    btn.textContent = 'Reiniciar (borrar todo lo guardado aqui)';
+  };
+
+  window.rlExportarCSV = function(){
+    const encabezados = ['Dominio','Marca','Semilla_Origen','Visitas_Mensuales_Estimadas','Porcentaje_Trafico_Pagado','Facturacion_Estimada_MXN','Ads_Activos','Plataforma_Detectada','Contacto_Nombre','Contacto_Cargo','Contacto_Telefono','Contacto_Correo','Contacto_LinkedIn','Nota_Calificacion','Fecha_Deteccion','Estado','Agencia_Asignada','Fecha_Asignacion','Correo_Enviado','Notas'];
+    const filas = candidatos.map(c => [
+      c.dominio, c.marca, c.semilla_origen||'', c.visitas_mensuales_estimadas||'', c.porcentaje_trafico_pagado||'',
+      c.facturacion_estimada_mxn||'', c.ads_activos||'', c.plataforma||'', c.contacto_nombre||'', c.contacto_cargo||'',
+      c.contacto_telefono||'', c.contacto_correo||'', c.contacto_linkedin||'',
+      (c.nota_calificacion||'').replace(/\t|\n/g,' '), c.fecha_deteccion||'', c.estado,
+      c.agencia_asignada||'', c.fecha_asignacion||'', c.correo_enviado_manual ? 'Si' : 'No', (c.notas||'').replace(/\t|\n/g,' ')
+    ].join('\t'));
+    const texto = [encabezados.join('\t')].concat(filas).join('\n');
+    const area = document.getElementById('rl-export-area');
+    document.getElementById('rl-export-label').textContent = 'Selecciona todo (clic + Ctrl/Cmd+A) y copia — luego pega en la primera celda vacía de tu Sheet';
+    const textarea = document.getElementById('rl-export-textarea');
+    textarea.value = texto;
+    area.style.display = 'block';
+    textarea.focus();
+    textarea.select();
+  };
+
+  window.rlExportarJSON = function(){
+    const leads = candidatos.map(c => ({
+      dominio: c.dominio,
+      marca: c.marca,
+      facturacion_estimada_mxn: c.facturacion_estimada_mxn || null,
+      plataforma: c.plataforma || '',
+      estado: c.estado === 'Asignado' ? 'Asignado' : 'Nuevo',
+      agencia_asignada: c.agencia_asignada || '',
+      contacto_nombre: c.contacto_nombre || '',
+      contacto_cargo: c.contacto_cargo || '',
+      contacto_telefono: c.contacto_telefono || '',
+      contacto_correo: c.contacto_correo || '',
+      contacto_linkedin: c.contacto_linkedin || '',
+      nota_calificacion: c.nota_calificacion || ''
+    }));
+    const payload = {
+      actualizado: new Date().toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' }),
+      leads
+    };
+    const area = document.getElementById('rl-export-area');
+    document.getElementById('rl-export-label').textContent = 'Copia todo y pégalo reemplazando el contenido completo de sitio-vercel/leads.json — luego sube el archivo a tu repo de Vercel';
+    const textarea = document.getElementById('rl-export-textarea');
+    textarea.value = JSON.stringify(payload, null, 2);
+    area.style.display = 'block';
+    textarea.focus();
+    textarea.select();
+  };
+
+  async function guardarYSincronizar(){
+    await guardar();
+  }
+
+  async function guardar(){
+    try { await window.storage.set('rl_candidatos', JSON.stringify(candidatos)); }
+    catch(e) { console.error('No se pudo guardar', e); }
+  }
+
+  function diasDesde(fechaStr){
+    if(!fechaStr) return null;
+    const ms = new Date() - new Date(fechaStr);
+    return Math.floor(ms / (1000*60*60*24));
+  }
+
+  function iniciales(dominio){
+    const marca = dominio.replace(/^www\./,'').split('.')[0];
+    return marca.substring(0,2).toUpperCase();
+  }
+
+  function badgePlataforma(p){
+    if(!p) return '<span class="rl-badge plat-unknown">Sin revisar</span>';
+    const low = p.toLowerCase();
+    if(low.includes('solo rrss') || low.includes('sin sitio')) return '<span class="rl-badge plat-none">Sin sitio — solo RRSS</span>';
+    if(low.includes('sitio propio')) return '<span class="rl-badge plat-custom">Desarrollo propio</span>';
+    if(low.includes('shopify')) return '<span class="rl-badge plat-shopify">Shopify</span>';
+    if(low.includes('vtex')) return '<span class="rl-badge plat-vtex">VTEX</span>';
+    if(low.includes('woocommerce')) return '<span class="rl-badge plat-woocommerce">WooCommerce</span>';
+    return '<span class="rl-badge plat-other">'+ p + '</span>';
+  }
+
+  function detectarCanal(texto, nombre){
+    if(!texto) return 'unknown';
+    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase());
+    if(idx === -1) return 'unknown';
+    const ctx = texto.substring(idx, idx+55).toLowerCase();
+    if(/no encontrado|:\s*no\b|no,/.test(ctx)) return 'inactive';
+    return 'active';
+  }
+
+  function extraerLink(texto, nombre){
+    if(!texto) return null;
+    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase());
+    if(idx === -1) return null;
+    const ctx = texto.substring(idx, idx+140);
+    const m = ctx.match(/(https?:\/\/[^\s,)\]]+|[a-z0-9-]+\.(?:com|mx)[^\s,)\]]*)/i);
+    return m ? (m[0].startsWith('http') ? m[0] : 'https://'+m[0]) : null;
+  }
+
+  function iconoCanal(letra, color, estado, link){
+    const opacidad = estado === 'active' ? '1' : (estado === 'inactive' ? '0.25' : '0.4');
+    const contenido = `<span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:7px; background:${color}; color:#fff; font-size:11px; font-weight:800; opacity:${opacidad};" title="${estado === 'active' ? 'Pautando activo' : (estado === 'inactive' ? 'No encontrado' : 'Sin revisar')}">${letra}</span>`;
+    return (estado === 'active' && link) ? `<a href="${link}" target="_blank" rel="noopener">${contenido}</a>` : contenido;
+  }
+
+  function renderAdsIconos(texto){
+    if(!texto) return '';
+    const canales = [
+      { nombre: 'Meta', letra: 'M', color: '#0866ff' },
+      { nombre: 'Google', letra: 'G', color: '#ea4335' },
+      { nombre: 'TikTok', letra: 'T', color: '#000000' }
+    ];
+    return canales.map(c => {
+      const estado = detectarCanal(texto, c.nombre);
+      const link = extraerLink(texto, c.nombre);
+      return iconoCanal(c.letra, c.color, estado, link);
+    }).join(' ');
+  }
+
+  function formatearGuion(textoOriginal, tema){
+    if(!textoOriginal) return '';
+    tema = tema || 'dark';
+    const esClaro = tema === 'light';
+    const colorTexto = esClaro ? '#343537' : '#cbd2dc';
+    const colorBorde = esClaro ? '#E7E8E9' : 'rgba(255,255,255,0.12)';
+    const patronHeaders = /(ANGULO DE VENTA|MENSAJE DE PRIMER CONTACTO(?:\s*\([^)]*\))?|OBJECIONES PROBABLES)/gi;
+    const infoPorHeader = {
+      'angulo de venta': { icono: '🎯', titulo: 'Ángulo de venta', color: esClaro ? '#0050c3' : '#7db4ff' },
+      'mensaje de primer contacto': { icono: '💬', titulo: 'Mensaje de primer contacto', color: esClaro ? '#1f9d55' : '#59d98a' },
+      'objeciones probables': { icono: '🛡️', titulo: 'Objeciones probables', color: esClaro ? '#b7791f' : '#ffd166' }
+    };
+    const partes = textoOriginal.split(patronHeaders);
+    if(partes.length < 2){
+      return `<p style="color:${colorTexto}; line-height:1.65;">${linkify(textoOriginal.trim())}</p>`;
+    }
+    let html = '';
+    if(partes[0] && partes[0].trim()) html += `<p style="margin-bottom:14px; color:${colorTexto}; line-height:1.6;">${linkify(partes[0].trim())}</p>`;
+    for(let i=1; i<partes.length; i+=2){
+      const clave = partes[i].toLowerCase().replace(/\s*\([^)]*\)/,'').trim();
+      const contenido = (partes[i+1]||'').trim();
+      const info = infoPorHeader[clave] || { icono: '📌', titulo: partes[i], color: esClaro ? '#6b7280' : '#9ca3af' };
+      html += `<div style="margin-bottom:18px;">
+        <div style="margin-bottom:8px;">
+          <span style="font-size:13px;">${info.icono}</span>
+          <span style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.07em; color:${info.color};">&nbsp;${info.titulo}</span>
+        </div>
+        <div style="color:${colorTexto}; line-height:1.65; padding-left:12px; border-left:2px solid ${colorBorde};">${linkify(contenido)}</div>
+      </div>`;
+    }
+    return html;
+  }
+
+  window.rlFiltrarTablaPorAgencia = function(agencia){
+    filtroAgenciaTabla = agencia;
+    renderTablaSeguimiento();
+  };
+
+  window.rlSetFiltro = function(filtro){
+    filtroActivo = filtro;
+    render();
+  };
+
+  window.rlMarcarCorreoEnviado = async function(dominio){
+    const c = candidatos.find(x=>x.dominio===dominio);
+    if(!c) return;
+    c.correo_enviado_manual = !c.correo_enviado_manual;
+    await guardarYSincronizar();
+    render();
+  };
+
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxylFKSIT4ju5B-7pn2sSRNfeChSZPHPbAspxIbpuLUHzTwdUWGJgqVW5n5RZWwOtM_BQ/exec';
+
+  window.rlCrearBorrador = async function(dominio){
+    const c = candidatos.find(x=>x.dominio===dominio);
+    if(!c || !c.agencia_asignada){ alert('Este lead todavia no tiene agencia asignada.'); return; }
+    const correo = AGENCIA_CORREOS[c.agencia_asignada];
+    if(!correo){ alert('Todavia no tengo el correo de "' + c.agencia_asignada + '". Agregalo en AGENCIA_CORREOS dentro del codigo, o dile a Claude cual es.'); return; }
+
+    borradorEstado[dominio] = 'cargando';
+    render();
+
+    const filaSiExiste = (etiqueta, valor) => valor ? `<tr><td style="padding:9px 0; color:#8b93a3; font-size:12.5px; vertical-align:top; white-space:nowrap; border-bottom:1px solid #1c2b45;">${etiqueta}</td><td style="padding:9px 0 9px 16px; font-size:13px; text-align:right; color:#e8ecf5; border-bottom:1px solid #1c2b45;">${valor}</td></tr>` : '';
+
+    const htmlCorreo = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#000b19; padding:32px 0;"><tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px; font-family:'Plus Jakarta Sans',Arial,sans-serif;">
+
+      <tr><td bgcolor="#0050c3" style="background-color:#0050c3; padding:24px 32px; border-radius:12px 12px 0 0;">
+        <span style="color:#ffffff; font-size:17px; font-weight:700; letter-spacing:-0.01em;">Tiendanube</span>
+        <span style="color:#BCDFFD; font-size:12px; margin-left:8px;">Partners MX</span>
+      </td></tr>
+
+      <tr><td bgcolor="#0a1830" style="background-color:#0a1830; padding:32px;">
+
+        <div style="color:#7db4ff; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px;">Nuevo lead asignado a ${c.agencia_asignada}</div>
+
+        <div style="color:#ffffff; font-size:23px; font-weight:700; margin-bottom:4px; letter-spacing:-0.01em;">${c.marca}</div>
+        <div style="margin-bottom:22px;"><a href="https://${c.dominio}" style="color:#7db4ff; font-size:13px; text-decoration:none;">${c.dominio}</a></div>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+          ${filaSiExiste('Facturación estimada', c.facturacion_estimada_mxn ? '$'+c.facturacion_estimada_mxn.toLocaleString('es-MX')+' MXN/mes' : '')}
+          ${filaSiExiste('Visitas mensuales', c.visitas_mensuales_estimadas)}
+          ${filaSiExiste('% Tráfico pagado', c.porcentaje_trafico_pagado)}
+          ${filaSiExiste('Plataforma actual', c.plataforma)}
+          ${(() => {
+            const partesContacto = [];
+            if(c.contacto_nombre) partesContacto.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
+            if(c.contacto_telefono) partesContacto.push('Tel: '+c.contacto_telefono);
+            if(c.contacto_correo) partesContacto.push(c.contacto_correo);
+            if(c.contacto_linkedin) partesContacto.push(linkify(c.contacto_linkedin));
+            return filaSiExiste('Contacto', partesContacto.join(' · '));
+          })()}
+        </table>
+
+        ${c.ads_activos ? `<div style="margin-bottom:20px;">
+          <div style="color:#8b93a3; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Ads activos</div>
+          <div style="color:#c3cad6; font-size:12.5px; line-height:1.7;">${linkify(c.ads_activos)}</div>
+        </div>` : ''}
+
+        ${c.nota_calificacion ? `<div style="margin-bottom:24px; padding-top:14px; border-top:1px solid #1c2b45;">
+          <div style="color:#c3cad6; font-size:12.5px; line-height:1.6;">${c.nota_calificacion}</div>
+        </div>` : ''}
+
+        <div style="color:#7db4ff; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">Guion sugerido</div>
+        ${c.guion ? formatearGuion(c.guion, 'dark') : '<span style="color:#8b93a3; font-size:13px;">No hay guion generado para este lead.</span>'}
+
+        <div style="margin-top:26px; padding-top:22px; border-top:1px solid #1c2b45;">
+          <div style="color:#7db4ff; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">¿Cómo va este lead? Avísanos con un clic</div>
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            ${['Lead','Opportunity','Won','Onboarding','Lost'].map((estadoBtn, i) => {
+              const colores = { Lead:'#37415c', Opportunity:'#0050c3', Won:'#1f9d55', Onboarding:'#7d5fc4', Lost:'#8b3a3a' };
+              const url = APPS_SCRIPT_URL + '?dominio=' + encodeURIComponent(c.dominio) + '&estado=' + encodeURIComponent(estadoBtn);
+              return `<td style="padding-right:${i<4?'6px':'0'};"><a href="${url}" target="_blank" style="display:inline-block; background-color:${colores[estadoBtn]}; color:#fff; font-size:11px; font-weight:700; text-decoration:none; padding:9px 14px; border-radius:100px;">${estadoBtn}</a></td>`;
+            }).join('')}
+          </tr></table>
+        </div>
+
+        <div style="color:#4b5875; font-size:11px; margin-top:26px; line-height:1.5;">Este lead se detectó y calificó automáticamente vía el Radar de Leads Pautando de Tiendanube Partners MX.</div>
+
+      </td></tr>
+
+      <tr><td bgcolor="#0a1830" style="background-color:#0a1830; border-radius:0 0 12px 12px; height:8px; line-height:8px; font-size:1px;">&nbsp;</td></tr>
+
+    </table>
+    </td></tr></table>`;
+
+    try {
+      const prompt = 'Usando la herramienta de Gmail disponible, crea un BORRADOR (no lo envies). Destinatario: "' + correo + '". Asunto: "Nuevo lead asignado: ' + c.marca + '". '
+        + 'IMPORTANTE: este correo lleva diseño con marca (colores, tarjeta) y DEBE verse como tal, no como texto plano. La herramienta de Gmail tiene un parametro llamado especificamente "htmlBody" (distinto del parametro de texto plano "body") — usa EXCLUSIVAMENTE "htmlBody" para el contenido de abajo, y deja "body" vacio o con un texto alternativo simple de una linea. No reescribas ni resumas el HTML, pegalo tal cual, completo, en "htmlBody": '
+        + JSON.stringify(htmlCorreo)
+        + '. Al final confirma el ID del borrador creado y confirma explicitamente que lo pusiste en htmlBody.';
+      let messages = [{ role: "user", content: prompt }];
+      let data = null;
+      for(let intento = 0; intento <= 4; intento++){
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 4000,
+            messages,
+            mcp_servers: [{ type: "url", url: "https://gmailmcp.googleapis.com/mcp/v1", name: "gmail" }]
+          })
+        });
+        data = await response.json();
+        console.log('borrador intento', intento, '— stop_reason:', data.stop_reason);
+        if(data.stop_reason !== 'pause_turn') break;
+        messages = messages.concat([{ role: "assistant", content: data.content }]);
+      }
+      const textBlocksArr = (data.content || []).filter(b=>b.type==='text');
+      const texto = textBlocksArr.length ? textBlocksArr[textBlocksArr.length-1].text : '';
+      console.log('Resultado creacion borrador para', c.dominio, ':', texto);
+      const huboToolUse = (data.content || []).some(b => b.type === 'mcp_tool_use' || b.type === 'mcp_tool_result');
+      borradorEstado[dominio] = (huboToolUse && !/error|no se pudo|not found|fall[oó]/i.test(texto)) ? 'listo' : 'error';
+      if(borradorEstado[dominio] === 'error'){
+        console.warn('No hubo uso confirmado de la herramienta de Gmail, o el texto final indica un error. Revisa el detalle completo:', JSON.stringify(data.content));
+      }
+    } catch(e){
+      console.error(e);
+      borradorEstado[dominio] = 'error';
+    }
+    render();
+  };
+
+  window.rlToggleDistribuir = function(){
+    const panel = document.getElementById('rl-distribuir-panel');
+    const abierto = panel.style.display !== 'none';
+    if(abierto){ panel.style.display = 'none'; return; }
+
+    const nuevos = candidatos.filter(c => c.estado === 'Nuevo');
+    panel.innerHTML = `
+      <div style="background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:20px; margin-bottom:18px;">
+        <div style="font-weight:700; font-size:13px; margin-bottom:4px;">Distribuir leads nuevos entre agencias</div>
+        <div style="font-size:11.5px; color:#6b7280; margin-bottom:14px;">Tienes ${nuevos.length} lead(s) sin revisar disponibles para repartir. Se toman en el orden que aparecen, por facturación estimada (mayor a menor).</div>
+        <div style="margin-bottom:6px; font-size:12px; color:#9ca3af;">Agencias que participan esta ronda:</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+          ${AGENCIAS.map(a => `<label style="display:flex; align-items:center; gap:6px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:100px; padding:6px 12px; font-size:12px; cursor:pointer;">
+            <input type="checkbox" class="rl-distribuir-agencia" value="${a}" style="cursor:pointer;"> ${a}
+          </label>`).join('')}
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <label style="font-size:12px; color:#9ca3af;">Leads por agencia:</label>
+          <input type="number" id="rl-distribuir-cantidad" value="2" min="1" max="20" style="width:60px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(255,255,255,0.16); border-radius:8px; padding:6px 10px; font-size:13px;">
+        </div>
+        <button class="rl-btn" onclick="rlEjecutarDistribucion()">Distribuir ahora</button>
+        <div id="rl-distribuir-progreso" style="font-size:12px; color:#9ca3af; margin-top:12px;"></div>
+      </div>`;
+    panel.style.display = 'block';
+  };
+
+  window.rlEjecutarDistribucion = async function(){
+    const checkboxes = document.querySelectorAll('.rl-distribuir-agencia:checked');
+    const agenciasElegidas = Array.from(checkboxes).map(c => c.value);
+    const cantidad = parseInt(document.getElementById('rl-distribuir-cantidad').value) || 2;
+    const progreso = document.getElementById('rl-distribuir-progreso');
+
+    if(agenciasElegidas.length === 0){ alert('Selecciona al menos una agencia.'); return; }
+
+    const totalNecesario = agenciasElegidas.length * cantidad;
+    const disponibles = candidatos.filter(c => c.estado === 'Nuevo')
+      .sort((a,b) => (b.facturacion_estimada_mxn||0) - (a.facturacion_estimada_mxn||0));
+
+    if(disponibles.length === 0){ alert('No hay leads sin revisar para repartir.'); return; }
+
+    const aRepartir = disponibles.slice(0, totalNecesario);
+    if(aRepartir.length < totalNecesario){
+      progreso.innerHTML = `Aviso: solo hay ${aRepartir.length} lead(s) disponibles — no alcanza para ${cantidad} por agencia a las ${agenciasElegidas.length} seleccionadas. Se repartirán los que hay.`;
+    }
+
+    for(let i = 0; i < aRepartir.length; i++){
+      const c = aRepartir[i];
+      const agencia = agenciasElegidas[i % agenciasElegidas.length];
+      progreso.innerHTML = `Asignando ${i+1} de ${aRepartir.length}: ${c.marca} → ${agencia}...`;
+      c.agencia_asignada = agencia;
+      c.fecha_asignacion = new Date().toISOString().split('T')[0];
+      c.estado = 'Asignado';
+      c.pipeline_status = 'Lead';
+      if(!c.guion){
+        await window.rlGenerarGuion(c.dominio);
+      }
+    }
+
+    await guardarYSincronizar();
+    progreso.innerHTML = `Listo — se repartieron ${aRepartir.length} lead(s) entre ${agenciasElegidas.length} agencia(s).`;
+    filtroActivo = 'asignado';
+    document.getElementById('rl-distribuir-panel').style.display = 'none';
+    render();
+  };
+
+  window.rlSincronizarPipeline = async function(){
+    const btn = document.getElementById('rl-sincronizar-btn');
+    const textoOriginal = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="rl-spin"></span>Sincronizando...';
+    try {
+      const prompt = 'Usando la herramienta de Google Drive disponible, lee el contenido del archivo con ID "1i5_nPyHTeGSUDiXRNUP-Z2SCLT_PUa3TjI0ABKRGXdw" (es un Google Sheet). De la tabla que contiene, extrae SOLO 2 datos por cada fila de datos (ignora la fila de encabezados): el valor de la columna "Dominio" y el valor de la columna "Pipeline_Status". Tu ultimo mensaje debe contener UNICAMENTE un array JSON con este formato exacto, sin texto antes ni despues: [{"dominio": "ejemplo.mx", "pipeline_status": "Won"}]. Si una fila no tiene Pipeline_Status, usa string vacio "". Si no encuentras la columna Pipeline_Status en absoluto, responde exactamente: SIN_COLUMNA';
+      let messages = [{ role: "user", content: prompt }];
+      let data = null;
+      for(let intento = 0; intento <= 4; intento++){
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 4000,
+            messages,
+            mcp_servers: [{ type: "url", url: "https://drivemcp.googleapis.com/mcp/v1", name: "googledrive" }]
+          })
+        });
+        data = await response.json();
+        console.log('sincronizar intento', intento, '— stop_reason:', data.stop_reason);
+        if(data.stop_reason !== 'pause_turn') break;
+        messages = messages.concat([{ role: "assistant", content: data.content }]);
+      }
+      const textBlocksArr = (data.content || []).filter(b=>b.type==='text');
+      const texto = textBlocksArr.length ? textBlocksArr[textBlocksArr.length-1].text : '';
+      console.log('Respuesta de sincronizacion:', texto);
+
+      if(texto.includes('SIN_COLUMNA')){
+        alert('No encontre la columna "Pipeline_Status" en tu Sheet — agregala primero (cualquier lugar de la fila de encabezados) y vuelve a intentar.');
+        return;
+      }
+
+      const jsonStr = extraerPrimerArrayJSON(texto);
+      if(!jsonStr){
+        alert('No pude leer los datos del Sheet esta vez. Revisa la consola para el detalle.');
+        return;
+      }
+      const filas = JSON.parse(jsonStr);
+      let actualizados = 0;
+      filas.forEach(f => {
+        const c = candidatos.find(x => x.dominio === f.dominio);
+        if(c && f.pipeline_status && c.pipeline_status !== f.pipeline_status){
+          c.pipeline_status = f.pipeline_status;
+          actualizados++;
+        }
+      });
+      await guardarYSincronizar();
+      render();
+      alert(actualizados > 0 ? `Listo — se actualizó el pipeline de ${actualizados} lead(s).` : 'Sincronizado, pero no hubo cambios nuevos respecto a lo que ya tenías.');
+    } catch(e){
+      console.error(e);
+      alert('Hubo un error sincronizando. Revisa la consola.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = textoOriginal;
+    }
+  };
+
+  function extraerPrimerArrayJSON(texto){
+    // Estrategia 1: bloque marcado con ```json ... ``` (Claude casi siempre lo usa asi)
+    const marcado = texto.match(/```json\s*([\s\S]*?)```/);
+    if(marcado){
+      const candidato = marcado[1].trim();
+      try { JSON.parse(candidato); return candidato; } catch(e){ /* seguir con estrategia 2 */ }
+    }
+    // Estrategia 2: contar corchetes, pero si el primer [ no forma un JSON valido, probar el siguiente [ (no rendirse en el primer intento)
+    let desde = 0;
+    while(true){
+      const inicio = texto.indexOf('[', desde);
+      if(inicio === -1) return null;
+      let profundidad = 0, dentroDeString = false, escapando = false, seCerro = false;
+      for(let i = inicio; i < texto.length; i++){
+        const ch = texto[i];
+        if(escapando){ escapando = false; continue; }
+        if(ch === '\\'){ escapando = true; continue; }
+        if(ch === '"'){ dentroDeString = !dentroDeString; continue; }
+        if(dentroDeString) continue;
+        if(ch === '[') profundidad++;
+        else if(ch === ']'){
+          profundidad--;
+          if(profundidad === 0){
+            seCerro = true;
+            const candidato = texto.substring(inicio, i+1);
+            try { JSON.parse(candidato); return candidato; }
+            catch(e){ break; } // este [ no era el correcto, probar el siguiente
+          }
+        }
+      }
+      if(!seCerro) return null; // nunca cerro el corchete, no hay nada mas que intentar
+      desde = inicio + 1;
+    }
+  }
+
+  function linkify(text){
+    if(!text) return '';
+    const escaped = String(text).replace(/</g,'&lt;');
+    const urlPattern = /(https?:\/\/[^\s,)]+|(?:www\.)?[a-z0-9-]+\.(?:com|mx|co|net|org|io)(?:\.[a-z]{2,3})?(?:\/[^\s,)]*)?)/gi;
+    return escaped.replace(urlPattern, (match) => {
+      const href = match.startsWith('http') ? match : 'https://' + match;
+      return `<a href="${href}" target="_blank" rel="noopener" style="color:#7db4ff; text-decoration:underline; word-break:break-all;">${match}</a>`;
+    });
+  }
+
+  function badgeEstado(e){
+    const cls = e === 'Asignado' ? 'estado-asignado' : (e === 'Descartado' ? 'estado-descartado' : 'estado-nuevo');
+    return '<span class="rl-badge '+cls+'">'+ e + '</span>';
+  }
+
+  window.rlBuscarCandidatos = async function(){
+    if(cargando) return;
+    const seedsRaw = document.getElementById('rl-seeds-input').value;
+    const semillas = seedsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+    if(semillas.length === 0){ alert('Escribe al menos un dominio semilla.'); return; }
+
+    cargando = true;
+    const btn = document.getElementById('rl-buscar-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="rl-spin"></span>Investigando en la web...';
+
+    const prompt = 'Eres un investigador de mercado de e-commerce en Mexico. Para cada uno de estos dominios semilla: '
+      + semillas.join(', ')
+      + ', busca en la web informacion para identificar hasta 3 negocios mexicanos del mismo giro/categoria que parezcan operar a buena escala. No repitas los mismos dominios semilla como resultado.\n\n'
+      + 'CRITICO sobre el dominio: el campo "dominio" que reportes DEBE ser exactamente la URL real que confirmaste en tus resultados de busqueda (la que aparece tal cual en el resultado o la que visitaste), nunca un dominio que tu construyas o adivines a partir del nombre de la marca (ej. nunca asumas que "Marca X" tiene el dominio "marcax.com" sin haberlo visto confirmado en un resultado real). Si encontraste la marca pero no su dominio exacto y confirmado, descarta ese candidato y busca otro en su lugar — es mejor un candidato menos que un link roto.\n\n'
+      + 'Para cada negocio candidato que encuentres, investiga a fondo (varias busquedas si hace falta, no te rindas en el primer intento):\n'
+      + '1. TRAFICO — tienes acceso a herramientas de Semrush, usalas primero para obtener el dato real de visitas mensuales y % de trafico pagado de cada dominio candidato (es un dato mucho mas confiable que buscarlo en la web). Si Semrush no tiene datos para un dominio especifico (comun en sitios muy nuevos o pequenos), como respaldo intenta una busqueda web de SimilarWeb para ese dominio puntual.\n'
+      + '1b. FACTURACION — OBLIGATORIO, sin excepcion: da tu mejor estimado de facturacion mensual en MXN para este negocio, usando cualquier senal disponible. Si tienes visitas de SimilarWeb, usa esa base (visitas x 2% conversion x ticket promedio tipico de la categoria). Si NO tienes visitas, usa otras senales para llegar a un numero razonable: numero de sucursales fisicas, tamano de catalogo, seguidores en redes y su nivel de engagement, menciones de volumen en prensa, anos operando, inversion evidente en ads. NUNCA dejes este campo vacio ni en 0 — siempre entrega un numero entero, aunque sea una estimacion amplia; si es muy incierta, dilo en la nota de calificacion, pero el numero debe existir.\n'
+      + '2. ADS — reporta los 3 canales, pero se eficiente: 1 busqueda por canal es suficiente (ej: "[marca] site:facebook.com/ads/library"), no repitas variantes si la primera no encuentra nada. (a) Meta Ad Library (facebook.com/ads/library), (b) TikTok Creative Center, (c) Google Ads Transparency Center (adstransparency.google.com). Para cada canal donde encuentres presencia activa, anota el canal y, si es posible, el link directo.\n'
+      + '3. Plataforma de ecommerce: Shopify, VTEX, WooCommerce, Magento, Tiendanube, u otra (di cual). Si NO encuentras evidencia de ninguna de estas, distingue entre 2 casos: si el dominio SI tiene un sitio web real (aunque sea informativo/catalogo, con contenido, pixeles de tracking, etc.) pero sin plataforma de ecommerce reconocida, usa "Sitio propio sin ecommerce reconocido"; si de verdad NO hay sitio web (solo redes sociales/perfil de Instagram), usa "Sin sitio — solo RRSS". No confundas estos 2 casos.\n'
+      + '4. CONTACTO — se eficiente con el tiempo de busqueda: DETENTE en cuanto encuentres un dato de contacto usable, no revises todas las fuentes si la primera ya te dio algo. Usa Vibe Prospecting (Explorium) primero para cada dominio. Si no trae nada, intenta 1-2 busquedas combinadas y especificas en vez de muchas sueltas (ej: "[marca] whatsapp OR contacto OR telefono" te puede dar footer, redes sociales y pagina de contacto en un solo intento; "[marca] CEO OR founder OR gerente linkedin" cubre LinkedIn directo). Si con 2-3 intentos totales por candidato no aparece nada, deja los campos vacios y sigue con el siguiente candidato — no insistas mas. Reporta lo que encuentres en: contacto_nombre, contacto_cargo, contacto_telefono (prioriza WhatsApp si se indica como tal), contacto_correo, contacto_linkedin. IMPORTANTE: un nombre solo, SIN telefono, correo o LinkedIn, NO es un dato de contacto util — este candidato terminaria descartado igual, asi que si solo encuentras un nombre sin ninguna forma real de contactarlo, sigue buscando telefono/correo/linkedin antes de dejarlo asi; un telefono o correo GENERAL de la marca (sin nombre de persona) SI cuenta como valido y es preferible a un nombre sin contacto. Regla innegociable: nunca inventes un dato que no viste confirmado en un resultado real; un dato falso es peor que uno vacio.\n\n'
+      + 'Prioriza la velocidad: es mejor terminar la lista completa con busquedas eficientes que agotar cada dato al maximo. Usa pocas busquedas bien dirigidas por candidato en vez de muchas sueltas.\n\n'
+      + 'Cuando termines de investigar TODOS los candidatos, tu ULTIMO mensaje de texto debe contener UNICAMENTE el array JSON final, sin explicar tu proceso ahi, sin encabezados, sin texto antes ni despues. Formato exacto: [{"dominio": "ejemplo.mx", "marca": "Ejemplo", "semilla_origen": "chabacano.mx", "visitas_mensuales_estimadas": "45,000", "porcentaje_trafico_pagado": "18%", "facturacion_estimada_mxn": 850000, "ads_activos": "Meta (link: facebook.com/ads/library/?id=123), TikTok: no encontrado, Google: si, sin link publico", "plataforma": "Shopify (o Sitio propio sin ecommerce reconocido, o Sin sitio — solo RRSS)", "contacto_nombre": "Juan Perez", "contacto_cargo": "CEO", "contacto_telefono": "+52 55 1234 5678", "contacto_correo": "contacto@ejemplo.mx", "contacto_linkedin": "linkedin.com/in/juanperez", "nota_calificacion": "Tiene 200k seguidores activos en Instagram y coverage en prensa especializada"}]. facturacion_estimada_mxn es OBLIGATORIO en todos los objetos, siempre un numero entero mayor a 0, nunca vacio. Los demas campos, si no hay dato pese a intentar en todas las fuentes indicadas, usa un string vacio "".';
+
+    try {
+      const tools = [{ type: "web_search_20250305", name: "web_search" }];
+      const mcpServers = [
+        { type: "url", url: "https://mcp.semrush.com/claude/v1/mcp", name: "semrush" },
+        { type: "url", url: "https://vibeprospecting.explorium.ai/mcp", name: "vibeprospecting" }
+      ];
+      let messages = [{ role: "user", content: prompt }];
+      let data = null;
+      const MAX_CONTINUACIONES = 4;
+      for(let intento = 0; intento <= MAX_CONTINUACIONES; intento++){
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 8000, messages: messages, tools: tools, mcp_servers: mcpServers })
+        });
+        data = await response.json();
+        console.log('intento', intento, '— stop_reason:', data.stop_reason);
+        if(data.stop_reason !== 'pause_turn') break;
+        messages = messages.concat([{ role: "assistant", content: data.content }]);
+        btn.innerHTML = '<span class="rl-spin"></span>Claude sigue investigando (' + (intento+2) + ')...';
+      }
+      const textBlocksArr = (data.content || []).filter(b=>b.type==='text');
+      const textBlocks = textBlocksArr.length ? textBlocksArr[textBlocksArr.length-1].text : '';
+      let nuevos = [];
+      const jsonStr = extraerPrimerArrayJSON(textBlocks);
+      if(jsonStr){
+        try { nuevos = JSON.parse(jsonStr); } catch(e){
+          console.error('No se pudo leer el JSON. Error:', e.message);
+          console.error('Texto completo que se intento leer:', jsonStr);
+          alert('Claude encontro candidatos pero hubo un error leyendo el formato:\n\n' + e.message + '\n\nRevisa la consola del navegador para ver el texto completo — copia TODO lo que salga ahi, sin recortar.');
+        }
+      } else if(data.stop_reason === 'max_tokens'){
+        console.error('Se corto por limite de tokens antes de llegar al JSON final.');
+        alert('Claude se quedo sin espacio de respuesta investigando y no llego a dar la lista final. Intenta de nuevo (a veces varia cuanto investiga), o reduce el numero de dominios semilla.');
+      } else {
+        console.error('No se encontro ningun array JSON en la respuesta:', textBlocks);
+        alert('Claude investigo pero no devolvio un array JSON reconocible. Revisa la consola del navegador.');
+      }
+
+      let agregados = 0;
+      for(const n of nuevos){
+        if(!n.dominio && !n.marca) continue;
+        const dominio = n.dominio || (n.marca.toLowerCase().replace(/\s+/g,'') + '.mx');
+        if(candidatos.find(c=>c.dominio === dominio)) continue;
+        const tieneContacto = (n.contacto_telefono||'').trim() || (n.contacto_correo||'').trim() || (n.contacto_linkedin||'').trim();
+        if(!tieneContacto) continue;
+        const visitasNum = parseInt((n.visitas_mensuales_estimadas||'').replace(/[^0-9]/g,'')) || 0;
+        const facturacionClaude = parseInt(String(n.facturacion_estimada_mxn||'').replace(/[^0-9]/g,'')) || 0;
+        // Prioridad: el estimado que Claude ya calculo con todas las senales disponibles; solo si viniera vacio, se usa la formula de respaldo (visitas x 2% x $900)
+        const facturacionEstimada = facturacionClaude > 0 ? facturacionClaude : (visitasNum > 0 ? Math.round(visitasNum * 0.02 * 900) : 0);
+        candidatos.push({
+          dominio: dominio,
+          marca: n.marca || dominio.replace(/^www\./,'').split('.')[0],
+          semilla_origen: n.semilla_origen || '',
+          visitas_mensuales_estimadas: n.visitas_mensuales_estimadas || '',
+          porcentaje_trafico_pagado: n.porcentaje_trafico_pagado || '',
+          facturacion_estimada_mxn: facturacionEstimada,
+          ads_activos: n.ads_activos || '',
+          contacto_nombre: n.contacto_nombre || '',
+          contacto_cargo: n.contacto_cargo || '',
+          contacto_telefono: n.contacto_telefono || '',
+          contacto_correo: n.contacto_correo || '',
+          contacto_linkedin: n.contacto_linkedin || '',
+          nota_calificacion: n.nota_calificacion || '',
+          plataforma: n.plataforma || null,
+          fecha_deteccion: new Date().toISOString().split('T')[0],
+          estado: 'Nuevo',
+          agencia_asignada: null,
+          fecha_asignacion: null,
+          guion: null,
+          notas: ''
+        });
+        agregados++;
+      }
+      await guardarYSincronizar();
+      render();
+      if(agregados === 0) alert('No se encontraron candidatos nuevos con datos de contacto esta vez (puede que Claude haya encontrado marcas pero sin ningun dato de contacto verificable, y por eso se descartaron). Intenta con otras semillas o revisa la consola.');
+    } catch(err){
+      console.error(err);
+      alert('Hubo un error investigando. Revisa la consola del navegador.');
+    } finally {
+      cargando = false;
+      btn.disabled = false;
+      btn.textContent = 'Buscar candidatos';
+    }
+  };
+
+  window.rlGenerarGuion = async function(dominio){
+    const c = candidatos.find(x=>x.dominio===dominio);
+    if(!c) return;
+    panelAbierto[dominio] = 'guion';
+    guionCargando[dominio] = true;
+    render();
+
+    const prompt = 'Eres un experto en partnerships de e-commerce en Mexico. Para esta marca candidata:\n'
+      + 'Dominio: ' + c.dominio + '\n'
+      + 'Visitas mensuales estimadas: ' + (c.visitas_mensuales_estimadas || 'no disponible') + '\n'
+      + 'Porcentaje de trafico pagado: ' + (c.porcentaje_trafico_pagado || 'no disponible') + '\n'
+      + 'Otra evidencia de que factura bien: ' + (c.nota_calificacion || 'no especificada') + '\n'
+      + 'Plataforma actual detectada: ' + (c.plataforma || 'desconocida') + '\n\n'
+      + 'Genera, en espanol de Mexico y en este orden:\n'
+      + '1. ANGULO DE VENTA: 2-3 lineas explicando por que esta marca es un buen lead para Tiendanube.\n'
+      + '2. MENSAJE DE PRIMER CONTACTO (WhatsApp): breve, calido, listo para copiar y pegar.\n'
+      + '3. OBJECIONES PROBABLES: las 2 mas probables segun si tiene plataforma o no, con una respuesta corta para cada una.\n'
+      + 'Usa esos 3 titulos en mayusculas tal cual, sin markdown.';
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+      const data = await response.json();
+      if(data.error){
+        console.error('Error de la API generando guion:', JSON.stringify(data.error));
+        c.guion = 'Error de la API: ' + (data.error.message || JSON.stringify(data.error));
+      } else {
+        const texto = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+        if(!texto) console.warn('Respuesta sin texto para', dominio, '— data completa:', JSON.stringify(data));
+        c.guion = texto || 'No se recibio respuesta (revisa la consola para el detalle completo).';
+      }
+    } catch(e){
+      console.error(e);
+      c.guion = 'Hubo un error generando el guion. Revisa la consola.';
+    }
+    guionCargando[dominio] = false;
+    await guardarYSincronizar();
+    render();
+  };
+
+  window.rlAsignar = async function(dominio){
+    const select = document.getElementById('rl-agencia-select-'+dominio);
+    if(!select || !select.value){ alert('Selecciona una agencia.'); return; }
+    const c = candidatos.find(x=>x.dominio===dominio);
+    c.agencia_asignada = select.value;
+    c.fecha_asignacion = new Date().toISOString().split('T')[0];
+    c.estado = 'Asignado';
+    c.pipeline_status = 'Lead';
+
+    if(!c.guion){
+      await window.rlGenerarGuion(dominio);
+    }
+
+    await guardarYSincronizar();
+    filtroActivo = 'asignado';
+    render();
+  };
+
+  window.rlDescartar = async function(dominio){
+    const c = candidatos.find(x=>x.dominio===dominio);
+    c.estado = 'Descartado';
+    await guardarYSincronizar();
+    render();
+  };
+
+  window.rlGenerarRecordatorio = async function(dominio){
+    const c = candidatos.find(x=>x.dominio===dominio);
+    if(!c) return;
+    panelAbierto[dominio] = 'guion';
+    guionCargando[dominio] = true;
+    render();
+    const dias = diasDesde(c.fecha_asignacion);
+    const prompt = 'Escribe un mensaje breve, cordial (no de regano), para WhatsApp, recordandole a la agencia "'+c.agencia_asignada+'" sobre el lead de la marca '+c.marca+' ('+c.dominio+') que se le asigno hace '+dias+' dias, preguntando si ya lo contacto o si necesita ayuda. Maximo 4 lineas.';
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 300,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+      const data = await response.json();
+      if(data.error){
+        console.error('Error de la API generando recordatorio:', JSON.stringify(data.error));
+        c.guion = 'Error de la API: ' + (data.error.message || JSON.stringify(data.error));
+      } else {
+        const texto = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+        if(!texto) console.warn('Respuesta sin texto para recordatorio', dominio, '— data completa:', JSON.stringify(data));
+        c.guion = texto || 'No se recibio respuesta (revisa la consola para el detalle completo).';
+      }
+    } catch(e){
+      c.guion = 'Error generando el recordatorio.';
+    }
+    guionCargando[dominio] = false;
+    await guardarYSincronizar();
+    render();
+  };
+
+  window.rlToggleDetalle = function(dominio){
+    panelAbierto[dominio] = (panelAbierto[dominio] === 'guion') ? null : 'guion';
+    render();
+  };
+
+  window.rlMostrarAsignar = function(dominio){
+    panelAbierto[dominio] = (panelAbierto[dominio] === 'asignar') ? null : 'asignar';
+    render();
+  };
+
+  window.rlToggleInfo = function(dominio){
+    panelAbierto[dominio] = (panelAbierto[dominio] === 'info') ? null : 'info';
+    render();
+  };
+
+  function render(){
+    const activos = candidatos.filter(c => c.estado !== 'Descartado');
+    const nuevos = activos.filter(c => c.estado === 'Nuevo');
+    const asignados = activos.filter(c => c.estado === 'Asignado');
+    const atrasados = asignados.filter(c => diasDesde(c.fecha_asignacion) > SLA_DIAS);
+
+    document.getElementById('rl-summary').innerHTML = `
+      <div class="rl-chip rl-chip-click ${filtroActivo==='nuevo'?'activo':''}" onclick="rlSetFiltro('nuevo')"><b>${nuevos.length}</b>sin revisar</div>
+      <div class="rl-chip rl-chip-click ${filtroActivo==='asignado'?'activo':''}" onclick="rlSetFiltro('asignado')"><b>${asignados.length}</b>asignados</div>
+      <div class="rl-chip rl-chip-click ${atrasados.length>0?'alert':''} ${filtroActivo==='atrasado'?'activo':''}" onclick="rlSetFiltro('atrasado')"><b>${atrasados.length}</b>atrasados (SLA ${SLA_DIAS}d)</div>
+    `;
+
+    const paraLista = filtroActivo === 'nuevo' ? nuevos : filtroActivo === 'atrasado' ? atrasados : asignados;
+
+    const wrap = document.getElementById('rl-table-wrap');
+    if(paraLista.length === 0){
+      const msgs = {
+        nuevo: 'Todavia no hay candidatos nuevos sin revisar.',
+        asignado: 'Todavia no has asignado ningun lead.',
+        atrasado: 'No hay leads atrasados por ahora.'
+      };
+      wrap.innerHTML = `<div class="rl-empty">
+        <div style="font-size:15px; font-weight:700; color:#5B6B8C;">${msgs[filtroActivo]}</div>
+        <div style="font-size:13px; margin-top:4px;">${activos.length === 0 ? 'Escribe tus dominios semilla arriba y da clic en "Buscar candidatos".' : ''}</div>
+      </div>`;
+      renderTablaSeguimiento();
+      return;
+    }
+
+    // orden: mas reciente primero
+    const ordenados = [...paraLista].sort((a,b)=>{
+      return (a.fecha_deteccion < b.fecha_deteccion) ? 1 : -1;
+    });
+
+    wrap.innerHTML = ordenados.map(c=>{
+      const dias = c.fecha_asignacion ? diasDesde(c.fecha_asignacion) : null;
+      const atrasado = c.estado==='Asignado' && dias > SLA_DIAS;
+      const panel = panelAbierto[c.dominio];
+      const verGuion = panel === 'guion';
+      const verAsignar = panel === 'asignar';
+      const verInfo = panel === 'info';
+      const cargandoGuion = !!guionCargando[c.dominio];
+
+      let detalleHtml = '';
+      if(verGuion){
+        if(cargandoGuion){
+          detalleHtml = `<div class="rl-detail"><span class="rl-spin" style="border-top-color:#0050c3; border-color:rgba(0,80,195,0.3);"></span> Generando...</div>`;
+        } else if(c.guion){
+          detalleHtml = `<div class="rl-detail">${formatearGuion(c.guion)}</div>`;
+        }
+      } else if(verAsignar){
+        detalleHtml = `<div class="rl-assign-form">
+            <select id="rl-agencia-select-${c.dominio}" style="border:1px solid #D7DEEC; border-radius:8px; padding:7px 10px; font-size:12.5px; flex:1; min-width:200px;">
+              <option value="">Selecciona una agencia...</option>
+              ${AGENCIAS.map(a => `<option value="${a}">${a}</option>`).join('')}
+            </select>
+            <button class="rl-btn small" onclick="rlAsignar('${c.dominio}')">Confirmar asignación</button>
+          </div>`;
+      } else if(verInfo){
+        const filas = [];
+        if(c.visitas_mensuales_estimadas) filas.push(`<div><span style="color:#6b7280;">Visitas/mes:</span> <b>${c.visitas_mensuales_estimadas}</b></div>`);
+        if(c.porcentaje_trafico_pagado) filas.push(`<div><span style="color:#6b7280;">Tráfico pagado:</span> <b>${c.porcentaje_trafico_pagado}</b></div>`);
+        if(c.ads_activos) filas.push(`<div><span style="color:#6b7280;">Ads (detalle):</span> ${linkify(c.ads_activos)}</div>`);
+        if(c.contacto_nombre || c.contacto_telefono || c.contacto_correo || c.contacto_linkedin){
+          const partes = [];
+          if(c.contacto_nombre) partes.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
+          if(c.contacto_telefono) partes.push('📞 '+c.contacto_telefono);
+          if(c.contacto_correo) partes.push('✉️ '+c.contacto_correo);
+          if(c.contacto_linkedin) partes.push(linkify(c.contacto_linkedin));
+          filas.push(`<div><span style="color:#6b7280;">Contacto:</span> ${partes.join(' · ')}</div>`);
+        }
+        if(c.nota_calificacion) filas.push(`<div><span style="color:#6b7280;">Nota:</span> ${c.nota_calificacion}</div>`);
+        detalleHtml = `<div class="rl-detail" style="display:flex; flex-direction:column; gap:8px;">${filas.join('') || 'Sin información adicional.'}</div>`;
+      }
+
+      return `<div class="rl-row ${atrasado?'overdue':''}">
+        <div class="rl-row-top">
+          <div class="rl-brand">
+            <div class="rl-avatar">${iniciales(c.dominio)}</div>
+            <div>
+              <div class="rl-brand-name">${c.marca}</div>
+              <div class="rl-domain"><a href="https://${c.dominio}" target="_blank" rel="noopener" style="color:#6b7280;">${c.dominio}</a></div>
+            </div>
+          </div>
+          <div class="rl-meta">
+            ${c.facturacion_estimada_mxn ? `<div class="rl-meta-item">Facturación est. <b>$${c.facturacion_estimada_mxn.toLocaleString('es-MX')} MXN/mes</b></div>` : ''}
+            ${c.ads_activos ? `<div class="rl-meta-item" style="display:flex; align-items:center; gap:6px;">Ads: ${renderAdsIconos(c.ads_activos)}</div>` : ''}
+            <div class="rl-meta-item">${badgePlataforma(c.plataforma)}</div>
+            <div class="rl-meta-item">${badgeEstado(c.estado)}${c.correo_enviado_manual ? ' <span class="rl-badge estado-enviado">✓ Correo enviado</span>' : ''}</div>
+            ${c.estado==='Asignado' ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b> · <span class="rl-days ${atrasado?'late':''}">${dias}d</span></div>` : ''}
+          </div>
+          <div class="rl-actions">
+            ${c.estado==='Nuevo' ? `<button class="rl-btn secondary small" onclick="rlMostrarAsignar('${c.dominio}')">Asignar a agencia</button>` : ''}
+            <button class="rl-btn secondary small" onclick="rlToggleInfo('${c.dominio}')">${verInfo?'Ocultar':'Más'} info</button>
+            ${!c.guion ? `<button class="rl-btn secondary small" onclick="rlGenerarGuion('${c.dominio}')">Generar guion</button>` : `<button class="rl-btn secondary small" onclick="rlToggleDetalle('${c.dominio}')">${verGuion?'Ocultar':'Ver'} guion</button>`}
+            ${c.estado==='Asignado' ? (
+              guionCargando[c.dominio] ? `<button class="rl-btn secondary small" disabled><span class="rl-spin"></span>Preparando guion...</button>` :
+              borradorEstado[c.dominio]==='cargando' ? `<button class="rl-btn secondary small" disabled><span class="rl-spin"></span>Creando borrador...</button>` :
+              borradorEstado[c.dominio]==='listo' ? `<button class="rl-btn secondary small" disabled>✓ Borrador creado — revísalo en Gmail</button>` :
+              `<button class="rl-btn secondary small" onclick="rlCrearBorrador('${c.dominio}')">Crear borrador en Gmail</button>`
+            ) : ''}
+            ${atrasado ? `<button class="rl-btn small" style="background:#D64545" onclick="rlGenerarRecordatorio('${c.dominio}')">Generar recordatorio</button>` : ''}
+            ${c.estado==='Nuevo' ? `<button class="rl-btn danger small" onclick="rlDescartar('${c.dominio}')">Descartar</button>` : ''}
+          </div>
+        </div>
+        ${detalleHtml}
+      </div>`;
+    }).join('');
+
+    renderTablaSeguimiento();
+  }
+
+  function renderTablaSeguimiento(){
+    const cont = document.getElementById('rl-tracking-section');
+    const todosAsignados = candidatos.filter(c => c.estado === 'Asignado');
+
+    if(todosAsignados.length === 0){
+      cont.innerHTML = `<div class="rl-track-title">Seguimiento de asignaciones</div>
+        <div class="rl-track-wrap"><div class="rl-track-empty">Todavia no has asignado ningun lead a una agencia.</div></div>`;
+      return;
+    }
+
+    const agenciasConLeads = [...new Set(todosAsignados.map(c => c.agencia_asignada))].sort();
+    const asignados = filtroAgenciaTabla === 'todas' ? todosAsignados : todosAsignados.filter(c => c.agencia_asignada === filtroAgenciaTabla);
+
+    const selectorHtml = `<select id="rl-filtro-agencia-tabla" onchange="rlFiltrarTablaPorAgencia(this.value)" style="background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(255,255,255,0.16); border-radius:8px; padding:7px 12px; font-size:12.5px; font-family:'Plus Jakarta Sans',sans-serif;">
+      <option value="todas" ${filtroAgenciaTabla==='todas'?'selected':''}>Todas las agencias (${todosAsignados.length})</option>
+      ${agenciasConLeads.map(a => `<option value="${a}" ${filtroAgenciaTabla===a?'selected':''}>${a} (${todosAsignados.filter(c=>c.agencia_asignada===a).length})</option>`).join('')}
+    </select>`;
+
+    if(asignados.length === 0){
+      cont.innerHTML = `<div class="rl-track-title" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;"><span>Seguimiento de asignaciones</span>${selectorHtml}</div>
+        <div class="rl-track-wrap"><div class="rl-track-empty">Esta agencia no tiene leads asignados por ahora.</div></div>`;
+      return;
+    }
+
+    const ordenadosPorFecha = [...asignados].sort((a,b) => (a.fecha_asignacion < b.fecha_asignacion) ? 1 : -1);
+
+    const filasHtml = ordenadosPorFecha.map(c => {
+      const estadoCorreo = borradorEstado[c.dominio];
+      let pillBorrador;
+      if(estadoCorreo === 'listo') pillBorrador = '<span class="rl-mail-pill si">✓ Borrador</span>';
+      else if(estadoCorreo === 'cargando') pillBorrador = '<span class="rl-mail-pill no">Creando...</span>';
+      else if(estadoCorreo === 'error') pillBorrador = '<span class="rl-mail-pill error">✗ Fallo</span>';
+      else pillBorrador = '<span class="rl-mail-pill no">Sin borrador</span>';
+
+      const dias = diasDesde(c.fecha_asignacion);
+      const atrasado = dias > SLA_DIAS;
+      const enviado = !!c.correo_enviado_manual;
+
+      const pillEnviado = enviado
+        ? `<button class="rl-btn secondary small" onclick="rlMarcarCorreoEnviado('${c.dominio}')" title="Clic para desmarcar">✓ Correo enviado</button>`
+        : `<button class="rl-btn small" onclick="rlMarcarCorreoEnviado('${c.dominio}')">Marcar correo enviado</button>`;
+
+      const coloresPipeline = { Lead:'#9ca3af', Opportunity:'#7db4ff', Won:'#6be3a0', Onboarding:'#b892ff', Lost:'#ff9494' };
+      const pipelineActual = c.pipeline_status || 'Lead';
+      const pillPipeline = `<span class="rl-badge" style="background:${coloresPipeline[pipelineActual]}22; color:${coloresPipeline[pipelineActual]};">${pipelineActual}</span>`;
+
+      return `<tr>
+        <td><span class="rl-track-brand">${c.marca}</span><span class="rl-track-domain">${c.dominio}</span></td>
+        <td>$${(c.facturacion_estimada_mxn||0).toLocaleString('es-MX')} MXN</td>
+        <td>${c.agencia_asignada}</td>
+        <td>${pillPipeline}</td>
+        <td>${c.fecha_asignacion||'-'} <span class="rl-days ${atrasado?'late':''}">(${dias}d)</span>${atrasado ? `<br><button class="rl-btn danger small" style="margin-top:4px;" onclick="rlGenerarRecordatorio('${c.dominio}')">Recordatorio</button>` : ''}</td>
+        <td>${pillBorrador}</td>
+        <td>${pillEnviado}</td>
+      </tr>`;
+    }).join('');
+
+    cont.innerHTML = `<div class="rl-track-title" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <span>Seguimiento de asignaciones <span style="font-weight:600; color:#9ca3af; font-size:12.5px;">${asignados.length} de ${todosAsignados.length} lead${todosAsignados.length!==1?'s':''}</span></span>
+        ${selectorHtml}
+      </div>
+      <div class="rl-track-wrap">
+        <table class="rl-track-table">
+          <thead><tr><th>Marca</th><th>Facturación est.</th><th>Agencia</th><th>Pipeline</th><th>Fecha asig.</th><th>Borrador</th><th>Envío</th></tr></thead>
+          <tbody>${filasHtml}</tbody>
+        </table>
+      </div>`;
+  }
+
+  init();
+})();
+</script>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar de Leads Pautando — Reporte</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: radial-gradient(ellipse at 12% -10%, #0050c4 0%, #000b19 42%, #000b19 100%);
+    color: #ffffff; min-height: 100vh; padding: 32px 20px 60px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .wordmark { font-size: 17px; font-weight: 800; }
+  .tag { font-size: 11px; color: #9ca3af; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 8px; }
+  h1 { font-size: clamp(22px, 3.5vw, 30px); font-weight: 800; margin: 18px 0 6px; }
+  .sub { color: #9ca3af; font-size: 13px; margin-bottom: 26px; }
+  .updated { font-size: 11px; color: #6b7280; margin-bottom: 26px; }
+
+  .card {
+    background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+    padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .row-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #0050c3, #3d7fe0);
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
+  }
+  .brand-name { font-weight: 700; font-size: 14.5px; }
+  .domain { font-size: 12px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+  .domain a { color: #6b7280; text-decoration: none; }
+  .meta { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .meta-item { font-size: 12px; color: #9ca3af; }
+  .meta-item b { color: #fff; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+  .badge.nuevo { background: rgba(0,80,195,0.18); color: #7db4ff; }
+  .badge.asignado { background: rgba(255,209,102,0.14); color: #ffd166; }
+  .contact { font-size: 12px; color: #cbd2dc; margin-top: 10px; }
+  .contact a { color: #7db4ff; }
+  .empty { text-align: center; padding: 60px 20px; color: #6b7280; }
+  footer { text-align: center; color: #4b5875; font-size: 11px; margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <span class="wordmark">Tiendanube</span>
+    <span class="tag">Partners MX</span>
+  </div>
+  <h1>Radar de Leads Pautando — Reporte</h1>
+  <div class="sub">Vista de solo lectura. Para buscar candidatos nuevos o generar guiones, usa la app interactiva en Claude.</div>
+  <div class="updated" id="updated"></div>
+
+  <div id="lista"></div>
+
+  <footer>Generado desde el Radar de Leads Pautando · Tiendanube Partners MX</footer>
+</div>
+
+<script>
+  // ======================================================================
+  // PEGA AQUI TUS DATOS REALES: reemplaza este array completo por el
+  // contenido que copiaste con el boton "Exportar para pegar en Sheets"
+  // de la app, convertido a este formato (un objeto por lead).
+  // Cada vez que quieras actualizar el reporte, reemplaza este array
+  // y vuelve a subir el archivo a GitHub.
+  // ======================================================================
+  const LEADS = [
+    {
+      dominio: "ejemplo-marca.mx",
+      marca: "Marca de Ejemplo",
+      facturacion_estimada_mxn: 450000,
+      plataforma: "Shopify",
+      estado: "Nuevo",
+      agencia_asignada: "",
+      contacto_nombre: "Juan Pérez",
+      contacto_cargo: "CEO",
+      contacto_telefono: "",
+      contacto_correo: "contacto@ejemplo-marca.mx",
+      contacto_linkedin: "linkedin.com/in/ejemplo",
+      nota_calificacion: "Este es un lead de ejemplo — reemplaza este array con tus datos reales exportados desde la app."
+    }
+  ];
+  // ======================================================================
+
+  document.getElementById('updated').textContent = 'Actualizado: ' + new Date().toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' });
+
+  // Lee el parametro ?agencia=NombreDeLaAgencia de la URL, si existe, para mostrar solo sus leads
+  const params = new URLSearchParams(window.location.search);
+  const agenciaFiltro = params.get('agencia');
+  if(agenciaFiltro){
+    document.querySelector('h1').textContent = 'Leads asignados a ' + agenciaFiltro;
+    document.querySelector('.sub').textContent = 'Vista de solo lectura, exclusiva para ' + agenciaFiltro + '.';
+  }
+
+  function badgeEstado(e){
+    if(e === 'Asignado') return '<span class="badge asignado">Asignado</span>';
+    return '<span class="badge nuevo">Nuevo</span>';
+  }
+
+  function render(){
+    const cont = document.getElementById('lista');
+    const leadsAMostrar = agenciaFiltro ? LEADS.filter(c => c.agencia_asignada === agenciaFiltro) : LEADS;
+    if(leadsAMostrar.length === 0){
+      cont.innerHTML = '<div class="empty">' + (agenciaFiltro ? 'Todavia no tienes leads asignados.' : 'No hay leads en este reporte.') + '</div>';
+      return;
+    }
+    cont.innerHTML = leadsAMostrar.map(c => {
+      const inicial = (c.marca || '?').substring(0,2).toUpperCase();
+      const contactoPartes = [];
+      if(c.contacto_nombre) contactoPartes.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
+      if(c.contacto_telefono) contactoPartes.push('Tel: ' + c.contacto_telefono);
+      if(c.contacto_correo) contactoPartes.push(c.contacto_correo);
+      if(c.contacto_linkedin) contactoPartes.push('<a href="https://'+c.contacto_linkedin.replace(/^https?:\/\//,'')+'" target="_blank">LinkedIn</a>');
+      return `<div class="card">
+        <div class="row-top">
+          <div class="brand">
+            <div class="avatar">${inicial}</div>
+            <div>
+              <div class="brand-name">${c.marca}</div>
+              <div class="domain"><a href="https://${c.dominio}" target="_blank">${c.dominio}</a></div>
+            </div>
+          </div>
+          ${badgeEstado(c.estado)}
+        </div>
+        <div class="meta">
+          ${c.facturacion_estimada_mxn ? `<div class="meta-item">Facturación est. <b>$${Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')} MXN/mes</b></div>` : ''}
+          ${c.plataforma ? `<div class="meta-item">${c.plataforma}</div>` : ''}
+          ${c.agencia_asignada ? `<div class="meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
+        </div>
+        ${contactoPartes.length ? `<div class="contact">${contactoPartes.join(' · ')}</div>` : ''}
+        ${c.nota_calificacion ? `<div class="contact" style="color:#6b7280; margin-top:6px;">${c.nota_calificacion}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  render();
+</script>
+</body>
+</html>

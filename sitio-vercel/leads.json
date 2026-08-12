@@ -1,0 +1,19 @@
+{
+  "actualizado": "11 de agosto de 2026",
+  "leads": [
+    {
+      "dominio": "ejemplo-marca.mx",
+      "marca": "Marca de Ejemplo",
+      "facturacion_estimada_mxn": 450000,
+      "plataforma": "Shopify",
+      "estado": "Nuevo",
+      "agencia_asignada": "",
+      "contacto_nombre": "Juan Pérez",
+      "contacto_cargo": "CEO",
+      "contacto_telefono": "",
+      "contacto_correo": "contacto@ejemplo-marca.mx",
+      "contacto_linkedin": "linkedin.com/in/ejemplo",
+      "nota_calificacion": "Lead de ejemplo — reemplaza este archivo completo con el JSON exportado desde la app."
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar de Leads Pautando — Tiendanube Partners MX</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000b19;
+    color: #ffffff;
+    overflow-x: hidden;
+  }
+
+  :root {
+    --color-primary: #0050c3;
+    --color-primary-light: #3d7fe0;
+    --color-dark: #000b19;
+    --color-dark-lighter: #001a3d;
+    --color-white: #ffffff;
+    --color-gray-100: #f5f7fa;
+    --color-gray-200: #e8ecf0;
+    --color-gray-400: #9ca3af;
+    --color-gray-600: #4b5563;
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nimbus-icon { display:inline-block; width:24px; height:24px; vertical-align:middle; flex-shrink:0; }
+  .nimbus-icon--lg { width:32px; height:32px; }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    backdrop-filter: blur(12px);
+    background: rgba(0, 11, 25, 0.6);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav__brand { display: flex; align-items: center; gap: 0.6rem; }
+  .nav__logo { width: 120px; height: 30px; color: #ffffff; }
+  .nav__tag {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #9ca3af; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 0.6rem;
+  }
+  .nav__cta {
+    background: var(--color-primary); color: #fff; font-weight: 700; font-size: 0.85rem;
+    padding: 0.6rem 1.4rem; border-radius: 100px; text-decoration: none;
+    transition: background 0.25s var(--transition-smooth);
+  }
+  .nav__cta:hover { background: var(--color-primary-light); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    position: relative; padding: 8rem clamp(1.5rem, 5vw, 4rem) 4rem;
+    background: radial-gradient(ellipse at 15% -10%, #0050c4 0%, #000b19 45%, #000b19 100%);
+  }
+  .hero__bg-grid {
+    position: absolute; inset: 0; opacity: 0.4; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 30% 20%, black 0%, transparent 65%);
+  }
+  .hero__content { max-width: 880px; text-align: center; position: relative; z-index: 1; }
+  .hero__eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #7db4ff; background: rgba(0,80,195,0.15); border: 1px solid rgba(0,80,195,0.35);
+    padding: 0.45rem 1rem; border-radius: 100px; margin-bottom: 2rem;
+  }
+  .hero__eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: #59d98a; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero h1 {
+    font-size: clamp(2.4rem, 5.5vw, 4.6rem); font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 1.5rem;
+  }
+  .hero h1 em {
+    font-family: 'IvyPresto Display', Georgia, serif; font-style: italic; font-weight: 400;
+    background: linear-gradient(120deg, #7db4ff, #59d98a);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p.lead {
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem); color: #9ca3af; line-height: 1.6;
+    max-width: 620px; margin: 0 auto 2.5rem;
+  }
+  .hero__ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--color-primary); color: #fff; font-weight: 700; font-size: 0.95rem;
+    padding: 0.95rem 1.8rem; border-radius: 100px; text-decoration: none; border: none; cursor: pointer;
+    transition: all 0.25s var(--transition-smooth);
+  }
+  .btn-primary:hover { background: var(--color-primary-light); transform: translateY(-2px); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: transparent; color: #fff; font-weight: 700; font-size: 0.95rem;
+    padding: 0.95rem 1.8rem; border-radius: 100px; text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: all 0.25s var(--transition-smooth);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.5); }
+
+  .hero__stats { display: flex; gap: clamp(1.5rem, 4vw, 3.5rem); justify-content: center; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat__num { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; color: #fff; display: block; }
+  .stat__label { font-size: 0.78rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.2rem; }
+
+  /* ===== SECTIONS ===== */
+  section { padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem); }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+  .section-eyebrow {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-primary-light); margin-bottom: 0.9rem; display: block;
+  }
+  .theme-light .section-eyebrow { color: var(--color-primary); }
+  h2.section-title {
+    font-size: clamp(1.9rem, 3.4vw, 2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+  .section-sub { font-size: 1.05rem; color: #9ca3af; max-width: 620px; line-height: 1.6; }
+  .theme-light .section-sub { color: #4b5563; }
+
+  /* ===== PROBLEMA (light theme) ===== */
+  .theme-light {
+    background: radial-gradient(ellipse at 90% 10%, #dfeaff 0%, #ffffff 45%);
+    color: var(--color-dark);
+  }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; align-items: start; }
+  @media (max-width: 800px) { .problem-grid { grid-template-columns: 1fr; } }
+  .problem-card {
+    background: #fff; border: 1px solid var(--color-gray-200); border-radius: 20px; padding: 2rem;
+  }
+  .problem-card__icon {
+    width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,80,195,0.08); color: var(--color-primary); margin-bottom: 1.2rem;
+  }
+  .problem-card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.6rem; }
+  .problem-card p { color: #4b5563; line-height: 1.6; font-size: 0.95rem; }
+
+  /* ===== COMO FUNCIONA (dark) ===== */
+  .theme-dark2 { background: #000b19; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3.5rem; counter-reset: step; }
+  @media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+  .step { position: relative; padding-top: 1rem; }
+  .step__num {
+    font-family: 'IvyPresto Display', Georgia, serif; font-style: italic;
+    font-size: 2.6rem; color: rgba(255,255,255,0.12); position: absolute; top: -1.2rem; left: 0;
+  }
+  .step__icon {
+    width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,80,195,0.12); border: 1px solid rgba(0,80,195,0.3); color: #7db4ff;
+    margin-bottom: 1.1rem; position: relative; z-index: 1;
+  }
+  .step h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step p { font-size: 0.88rem; color: #9ca3af; line-height: 1.55; }
+
+  /* ===== FEATURES (dark, feature cards) ===== */
+  .theme-blue-section {
+    background: radial-gradient(ellipse at 100% 100%, #0050c4 0%, #000b19 55%);
+  }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 3.5rem; }
+  @media (max-width: 900px) { .features-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } }
+  .feature-card {
+    background: rgba(0, 80, 195, 0.12);
+    border: 1px solid rgba(0, 80, 195, 0.28);
+    border-radius: 16px; padding: 1.6rem; backdrop-filter: blur(10px);
+    transition: all 0.3s var(--transition-smooth);
+  }
+  .feature-card:hover { background: rgba(0, 80, 195, 0.2); border-color: rgba(0, 80, 195, 0.5); transform: translateY(-4px); }
+  .feature-card__icon { color: #7db4ff; margin-bottom: 1rem; }
+  .feature-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .feature-card p { font-size: 0.85rem; color: #9ca3af; line-height: 1.55; }
+
+  /* ===== FINAL CTA ===== */
+  .final-cta {
+    background: linear-gradient(135deg, #0050c4 0%, #00296b 100%);
+    border-radius: 28px; margin: 0 clamp(1.5rem, 5vw, 4rem) 5rem;
+    padding: clamp(2.5rem, 6vw, 4.5rem); text-align: center; position: relative; overflow: hidden;
+  }
+  .final-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.12) 0%, transparent 50%);
+  }
+  .final-cta h2 { font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 800; margin-bottom: 1rem; position: relative; }
+  .final-cta p { color: rgba(255,255,255,0.75); margin-bottom: 2rem; max-width: 520px; margin-left: auto; margin-right: auto; position: relative; }
+  .final-cta .btn-primary { background: #fff; color: var(--color-primary); position: relative; }
+  .final-cta .btn-primary:hover { background: #f0f4ff; }
+
+  footer {
+    text-align: center; padding: 2.5rem; color: #4b5563; font-size: 0.8rem;
+  }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: all 0.7s var(--transition-smooth); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__brand">
+    <svg class="nav__logo" viewBox="0 0 160 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TiendaNube">
+      <path d="M51.4723 19.5098V7.49283H54.3653V19.5098H51.4723ZM67.3608 10.8394C67.0958 10.1395 66.7119 9.51774 66.2124 8.97244C65.7113 8.42714 65.1048 8.00076 64.3897 7.69158C63.6745 7.38241 62.8472 7.22782 61.9044 7.22782C60.7849 7.22782 59.7725 7.49962 58.867 8.04492C57.9616 8.59022 57.2464 9.32918 56.7249 10.2652C56.2017 11.2012 55.9401 12.2714 55.9401 13.4792C55.9401 14.6871 56.1983 15.7029 56.713 16.6593C57.2277 17.6174 57.9497 18.375 58.8772 18.9339C59.8047 19.4945 60.8868 19.7731 62.1235 19.7731C62.9474 19.7731 63.7034 19.6474 64.388 19.3977C65.0726 19.148 65.6654 18.8014 66.1666 18.3598C66.6677 17.9181 67.0346 17.4102 67.2708 16.836L64.9299 15.6876C64.6649 16.1599 64.2996 16.5353 63.8359 16.8139C63.3721 17.0942 62.8081 17.2335 62.1456 17.2335C61.4831 17.2335 60.897 17.0789 60.3891 16.7697C59.8812 16.4606 59.4973 16.0223 59.2407 15.4549C59.0828 15.1083 58.9842 14.7278 58.9452 14.3167H67.6003C67.6598 14.1553 67.6988 13.9634 67.7209 13.7425C67.743 13.5217 67.7549 13.3077 67.7549 13.1021C67.7549 12.2918 67.6224 11.5376 67.3574 10.8377L67.3608 10.8394ZM60.2923 10.0664C60.7628 9.76406 61.3013 9.61287 61.9044 9.61287C62.5075 9.61287 63.0782 9.76746 63.5284 10.0766C63.9769 10.3858 64.3013 10.8054 64.5001 11.3354C64.5901 11.5766 64.6445 11.8348 64.6666 12.1083H59.008C59.0573 11.8518 59.1269 11.6123 59.2204 11.3898C59.4633 10.8088 59.82 10.3671 60.2923 10.0647V10.0664ZM79.3744 9.40393C78.9922 8.71933 78.4571 8.18592 77.7725 7.802C77.0879 7.41978 76.303 7.22782 75.4197 7.22782C74.5363 7.22782 73.8178 7.41639 73.1773 7.79181C72.683 8.0823 72.2974 8.47641 72.0171 8.97244V7.49453H69.3008V19.5115H72.1937V12.4651C72.1937 11.9351 72.2974 11.4781 72.5029 11.0959C72.7085 10.7137 72.9956 10.4147 73.3642 10.2006C73.7328 9.9866 74.1524 9.87958 74.623 9.87958C75.0935 9.87958 75.5318 9.9866 75.8936 10.2006C76.2538 10.4147 76.5375 10.712 76.7447 11.0959C76.9503 11.4798 77.0539 11.9351 77.0539 12.4651V19.5115H79.9469V11.7805C79.9469 10.8818 79.7549 10.0902 79.3727 9.40563L79.3744 9.40393ZM91.1824 2.98434V8.70914C90.8359 8.33031 90.4214 8.01605 89.9338 7.76973C89.2187 7.40959 88.4067 7.22782 87.4927 7.22782C86.358 7.22782 85.3319 7.50812 84.4112 8.06701C83.4905 8.6276 82.7651 9.37845 82.2351 10.3196C81.7051 11.2624 81.4401 12.3224 81.4401 13.4996C81.4401 14.6769 81.7051 15.7233 82.2351 16.6797C82.7651 17.6378 83.4871 18.392 84.3993 18.9441C85.3115 19.4962 86.3512 19.7731 87.5131 19.7731C88.3812 19.7731 89.1847 19.5999 89.9202 19.2533C90.4876 18.9866 90.9582 18.6282 91.3336 18.1814V19.5064H94.072V2.98434H91.179H91.1824ZM90.7526 15.3784C90.4655 15.9237 90.0714 16.3501 89.5703 16.6593C89.0692 16.9685 88.4882 17.1231 87.8257 17.1231C87.1632 17.1231 86.5958 16.9685 86.0811 16.6593C85.5646 16.3501 85.1637 15.9237 84.8766 15.3784C84.5896 14.8331 84.4452 14.208 84.4452 13.5013C84.4452 12.7946 84.5896 12.1729 84.8766 11.6344C85.1637 11.0976 85.5646 10.6695 86.0811 10.3535C86.5958 10.0376 87.1785 9.87788 87.8257 9.87788C88.4729 9.87788 89.0692 10.0325 89.5703 10.3416C90.0714 10.6508 90.4655 11.0823 90.7526 11.6344C91.0397 12.1865 91.1841 12.8082 91.1841 13.5013C91.1841 14.1944 91.0397 14.8348 90.7526 15.3784ZM105.737 9.27142C105.318 8.63099 104.732 8.12986 103.981 7.76973C103.23 7.40959 102.36 7.22782 101.375 7.22782C100.565 7.22782 99.8138 7.36033 99.1224 7.62533C98.4293 7.89034 97.8296 8.25557 97.3217 8.71933C96.8138 9.18309 96.4418 9.73179 96.2056 10.3654L98.5686 11.5138C98.7894 10.9685 99.1394 10.5302 99.6184 10.1989C100.097 9.86769 100.646 9.70121 101.265 9.70121C101.927 9.70121 102.46 9.87448 102.866 10.221C103.271 10.5676 103.475 10.9974 103.475 11.5138V11.9028L99.897 12.4855C98.9542 12.6333 98.1745 12.883 97.5562 13.2363C96.9378 13.5897 96.4808 14.0279 96.1869 14.5512C95.8914 15.0744 95.7453 15.6672 95.7453 16.3297C95.7453 16.9923 95.9151 17.6293 96.2532 18.1525C96.5913 18.6757 97.0703 19.0766 97.6886 19.3569C98.307 19.6372 99.0358 19.7765 99.8749 19.7765C100.537 19.7765 101.141 19.6848 101.686 19.4996C102.231 19.3162 102.717 19.0512 103.143 18.7046C103.317 18.5653 103.476 18.4073 103.629 18.2408V19.5115H106.368V11.5155C106.368 10.661 106.157 9.91355 105.737 9.27312V9.27142ZM103.086 16.1072C102.827 16.5642 102.467 16.9209 102.003 17.1791C101.54 17.4373 101.006 17.5664 100.402 17.5664C99.9293 17.5664 99.5369 17.4458 99.2192 17.2012C98.9016 16.9583 98.7436 16.6304 98.7436 16.2176C98.7436 15.8048 98.8829 15.4447 99.1632 15.1797C99.4435 14.9147 99.8699 14.7312 100.444 14.6276L103.47 14.1129V14.6055C103.47 15.1508 103.34 15.6519 103.082 16.1072H103.086ZM118.716 9.40393C118.334 8.71933 117.798 8.18592 117.114 7.802C116.429 7.41978 115.644 7.22782 114.761 7.22782C113.878 7.22782 113.159 7.41639 112.519 7.79181C112.024 8.0823 111.639 8.47641 111.359 8.97244V7.49453H108.642V19.5115H111.535V12.4651C111.535 11.9351 111.639 11.4781 111.844 11.0959C112.05 10.7137 112.337 10.4147 112.706 10.2006C113.074 9.9866 113.494 9.87958 113.964 9.87958C114.435 9.87958 114.873 9.9866 115.235 10.2006C115.595 10.4147 115.879 10.712 116.086 11.0959C116.292 11.4798 116.395 11.9351 116.395 12.4651V19.5115H119.288V11.7805C119.288 10.8818 119.096 10.0902 118.714 9.40563L118.716 9.40393ZM126.661 19.7748C125.614 19.7748 124.69 19.5642 123.889 19.1446C123.085 18.725 122.463 18.1389 122.022 17.3881C121.58 16.6372 121.359 15.7675 121.359 14.7822V7.49283H124.252V14.6938C124.252 15.1797 124.356 15.6078 124.561 15.9747C124.767 16.3433 125.054 16.627 125.423 16.8258C125.791 17.0245 126.211 17.1248 126.681 17.1248C127.152 17.1248 127.59 17.0262 127.952 16.8258C128.312 16.627 128.596 16.3433 128.803 15.9747C129.009 15.6061 129.112 15.1797 129.112 14.6938V7.49283H132.005V14.7822C132.005 15.7692 131.781 16.6372 131.331 17.3881C130.881 18.1389 130.259 18.725 129.464 19.1446C128.669 19.5642 127.733 19.7748 126.659 19.7748H126.661ZM146.11 10.3196C145.571 9.37675 144.848 8.6259 143.934 8.06701C143.02 7.50812 141.997 7.22782 140.864 7.22782C139.937 7.22782 139.12 7.40789 138.413 7.76973C137.932 8.01605 137.521 8.32862 137.176 8.70744V2.98434H134.283V19.5098H137V18.1474C137.387 18.6112 137.869 18.9815 138.447 19.255C139.176 19.6015 139.974 19.7748 140.844 19.7748C142.007 19.7748 143.045 19.4979 143.958 18.9458C144.87 18.3937 145.592 17.6395 146.122 16.6814C146.652 15.725 146.917 14.6633 146.917 13.5013C146.917 12.3394 146.648 11.2624 146.11 10.3213V10.3196ZM143.482 15.3784C143.195 15.9237 142.794 16.3501 142.278 16.6593C141.761 16.9685 141.173 17.1231 140.511 17.1231C139.848 17.1231 139.306 16.9685 138.799 16.6593C138.291 16.3501 137.893 15.9237 137.606 15.3784C137.319 14.8331 137.174 14.208 137.174 13.5013C137.174 12.7946 137.319 12.1865 137.606 11.6344C137.893 11.0823 138.291 10.6508 138.799 10.3416C139.306 10.0325 139.877 9.87788 140.511 9.87788C141.144 9.87788 141.763 10.0359 142.278 10.3535C142.792 10.6712 143.195 11.0976 143.482 11.6344C143.769 12.1729 143.913 12.7946 143.913 13.5013C143.913 14.208 143.769 14.8348 143.482 15.3784ZM159.291 10.8394C159.026 10.1395 158.642 9.51774 158.142 8.97244C157.641 8.42714 157.035 8.00076 156.319 7.69158C155.604 7.38241 154.777 7.22782 153.834 7.22782C152.715 7.22782 151.702 7.49962 150.797 8.04492C149.891 8.59022 149.176 9.32918 148.655 10.2652C148.131 11.2012 147.87 12.2714 147.87 13.4792C147.87 14.6871 148.128 15.7029 148.643 16.6593C149.158 17.6174 149.879 18.375 150.807 18.9339C151.735 19.4945 152.817 19.7731 154.053 19.7731C154.877 19.7731 155.633 19.6474 156.318 19.3977C157.002 19.148 157.595 18.8014 158.096 18.3598C158.597 17.9181 158.964 17.4102 159.201 16.836L156.86 15.6876C156.595 16.1599 156.229 16.5353 155.766 16.8139C155.302 17.0942 154.738 17.2335 154.075 17.2335C153.413 17.2335 152.827 17.0789 152.319 16.7697C151.811 16.4606 151.427 16.0223 151.171 15.4549C151.013 15.1083 150.914 14.7278 150.875 14.3167H159.53C159.59 14.1553 159.629 13.9634 159.651 13.7425C159.673 13.5217 159.685 13.3077 159.685 13.1021C159.685 12.2918 159.552 11.5376 159.287 10.8377L159.291 10.8394ZM152.392 10.0664C152.862 9.76406 153.401 9.61287 154.004 9.61287C154.607 9.61287 155.178 9.76746 155.628 10.0766C156.077 10.3858 156.401 10.8054 156.6 11.3354C156.69 11.5766 156.746 11.8348 156.766 12.1083H151.108C151.157 11.8518 151.227 11.6123 151.32 11.3898C151.563 10.8088 151.92 10.3671 152.392 10.0647V10.0664ZM48.0035 7.50302V4.11061H45.1241V7.50302H43.1094V10.0766H45.1241V19.5081H48.0035V10.0766H50.0182V7.50302H48.0035ZM52.9316 2.41016C51.9922 2.41016 51.2311 3.1712 51.2311 4.11061C51.2311 5.05002 51.9922 5.81106 52.9316 5.81106C53.871 5.81106 54.632 5.05002 54.632 4.11061C54.632 3.1712 53.871 2.41016 52.9316 2.41016Z"></path><path d="M24.0068 0H23.9915C23.9915 0 23.983 0 23.9779 0C20.4547 0.00509626 17.098 1.38958 14.5923 3.82559C13.3097 3.28199 11.9287 3 10.5017 3C4.71065 3 0 7.71065 0 13.5C0 19.2894 4.71065 24 10.5 24C11.9049 24 13.2945 23.7129 14.5804 23.1727C17.013 25.5391 20.3307 27 23.9847 27C31.4287 27 37.4847 20.9439 37.4847 13.5C37.4847 6.05606 31.4405 0.0118913 24.0068 0ZM23.9847 24C18.1954 24 13.4847 19.2894 13.4847 13.5H10.4847C10.4847 16.1484 11.2542 18.6183 12.5759 20.7044C11.9032 20.8981 11.205 21 10.5 21C6.36523 21 3 17.6348 3 13.5C3 9.36523 6.36523 6 10.5 6C12.1376 6 13.6937 6.51812 14.9983 7.4983C16.906 8.93035 18 11.1183 18 13.5H21C21 10.359 19.6393 7.45923 17.2491 5.4581C19.1263 3.88335 21.5062 3.0017 23.9915 3C29.7775 3.0034 34.483 7.71234 34.483 13.5C34.483 19.2877 29.7724 24 23.983 24H23.9847Z"></path>
+    </svg>
+    <span class="nav__tag">Partners MX</span>
+  </div>
+  <a href="https://claude.ai/artifacts/latest/0e7b0ff5-2336-4f20-8aea-7d95056b2751" target="_blank" class="nav__cta" id="nav-cta-link">Abrir herramienta →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero__bg-grid"></div>
+  <div class="hero__content">
+    <div class="hero__eyebrow"><span class="dot"></span> Radar activo · Investigación en vivo</div>
+    <h1 class="reveal in">Encuentra a tu próximo<br><em>gran cliente</em> antes que la competencia</h1>
+    <p class="lead">Un radar que investiga marcas mexicanas que ya están invirtiendo en anuncios, calcula su facturación estimada, detecta si tienen plataforma de ecommerce y encuentra a quién contactar — para que tus agencias solo tengan que decidir a quién llamar primero.</p>
+    <div class="hero__ctas">
+      <a href="https://claude.ai/artifacts/latest/0e7b0ff5-2336-4f20-8aea-7d95056b2751" target="_blank" class="btn-primary" id="hero-cta-link">
+        <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M2.67 10.73a3.52 3.52 0 0 0-.94 1.93 5 5 0 0 0-.07 1.1v.58h.8a5 5 0 0 0 .88-.08 3.46 3.46 0 0 0 1.93-.94 1.76 1.76 0 0 0-.14-2.48 1.76 1.76 0 0 0-2.46-.11m1.74 1.73a2.26 2.26 0 0 1-1.26.6h-.22v-.22a2.26 2.26 0 0 1 .6-1.26.36.36 0 0 1 .24-.08.67.67 0 0 1 .47.22.54.54 0 0 1 .17.74M14.65 2.24a.91.91 0 0 0-.89-.89A8.75 8.75 0 0 0 7.27 3.5L5.64 5.4l-2.4-.5a1 1 0 0 0-.92.27l-.68.68a1 1 0 0 0-.28.81 1 1 0 0 0 .45.74l2.06 1.32.13.08 3.2 3.25.08.08 1.32 2.06a1 1 0 0 0 .74.45h.11a1 1 0 0 0 .7-.29l.68-.68a1 1 0 0 0 .27-.92l-.5-2.39 1.84-1.58a8.8 8.8 0 0 0 2.21-6.54M3.11 6.15l1.32.28-.64.75-1-.67zm6.38 7.1-.67-1 .75-.64.28 1.32zm2.39-5.11.18.17zm-.28-.28L7.92 11 5 8.08 8.14 4.4a7.44 7.44 0 0 1 5.26-1.8 7.48 7.48 0 0 1-1.8 5.26"/></svg>
+        Abrir el radar
+      </a>
+      <a href="#como-funciona" class="btn-ghost">Ver cómo funciona</a>
+    </div>
+    <div class="hero__stats">
+      <div class="stat"><span class="stat__num">3</span><span class="stat__label">Canales de ads revisados</span></div>
+      <div class="stat"><span class="stat__num">100%</span><span class="stat__label">Leads con facturación estimada</span></div>
+      <div class="stat"><span class="stat__num">14</span><span class="stat__label">Agencias listas para asignar</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="theme-light">
+  <div class="section-inner">
+    <span class="section-eyebrow">El problema de siempre</span>
+    <h2 class="section-title">Tus agencias tienen comisión,<br>pero no motor de ventas propio</h2>
+    <p class="section-sub">Son negocios de entrega de proyectos, no de prospección. Pedirles que "generen leads" sin ayuda casi nunca funciona — así que se las ayuda con el trabajo pesado.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-card__icon">
+          <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M13.35 10.48H4.5l-.24-1.25h9.13a1.24 1.24 0 0 0 1.22-1l.84-4a1.25 1.25 0 0 0-1.22-1.51H3l-.22-1.24H.5v1.25h1.25l1.5 7.84a2 2 0 0 0-1.54 1.93 2.09 2.09 0 0 0 2.16 2 2.08 2.08 0 0 0 2.13-2 2 2 0 0 0-.16-.77h5.49a2 2 0 0 0-.16.77 2.09 2.09 0 0 0 2.16 2 2 2 0 1 0 0-4zM14.23 4l-.84 4H4l-.74-4zM3.87 13.27A.85.85 0 0 1 3 12.5a.85.85 0 0 1 .91-.77.84.84 0 0 1 .9.77.84.84 0 0 1-.94.77m9.48 0a.85.85 0 0 1-.91-.77.92.92 0 0 1 1.81 0 .85.85 0 0 1-.9.77"/></svg>
+        </div>
+        <h3>Sin agencia sabe a quién llamar</h3>
+        <p>Prospectar en frío no es su negocio — pero identificar quién ya está listo para migrar, sí puede serlo si alguien más hace la tarea de investigación.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card__icon">
+          <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .5A7.77 7.77 0 0 0 0 8a7.77 7.77 0 0 0 8 7.5A7.77 7.77 0 0 0 16 8 7.77 7.77 0 0 0 8 .5m0 13.75A6.52 6.52 0 0 1 1.25 8 6.52 6.52 0 0 1 8 1.75 6.52 6.52 0 0 1 14.75 8 6.52 6.52 0 0 1 8 14.25M6.53 9.02 4.58 7.07l-.88.89 2.83 2.83.88-.89 4.78-4.77-.89-.88z"/></svg>
+        </div>
+        <h3>Los leads calificados sí existen</h3>
+        <p>Marcas que ya invierten en Meta, TikTok o Google están mostrando, sin saberlo, que tienen presupuesto y urgencia — solo hay que encontrarlas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="theme-dark2" id="como-funciona">
+  <div class="section-inner">
+    <span class="section-eyebrow" style="color:#7db4ff;">Cómo funciona</span>
+    <h2 class="section-title">De 3 marcas conocidas a<br>una lista lista para asignar</h2>
+    <p class="section-sub">Le das un punto de partida; el radar hace el resto de la investigación por ti.</p>
+    <div class="steps">
+      <div class="step">
+        <span class="step__num">01</span>
+        <div class="step__icon">
+          <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M16 7.38A7.82 7.82 0 0 0 8 .5a7.82 7.82 0 0 0-8 6.88v1.24a7.82 7.82 0 0 0 8 6.88 7.82 7.82 0 0 0 8-6.88zm-1.25 0h-3a11.3 11.3 0 0 0-.43-2.54 7.6 7.6 0 0 0 1.75-1 6 6 0 0 1 1.65 3.54zm-9.18 0a9.7 9.7 0 0 1 .37-2.14A8.4 8.4 0 0 0 8 5.5a8.5 8.5 0 0 0 2.09-.26 10.2 10.2 0 0 1 .37 2.14zm4.92 1.24a9.6 9.6 0 0 1-.37 2.14 8.5 8.5 0 0 0-4.18 0 9.7 9.7 0 0 1-.37-2.14zm.4-5A12 12 0 0 0 10 2a6.9 6.9 0 0 1 2 1 6.6 6.6 0 0 1-1.14.66zm-2.6-1.86a10 10 0 0 1 1.38 2.3A7.6 7.6 0 0 1 8 4.25a7.6 7.6 0 0 1-1.67-.19 9.8 9.8 0 0 1 1.38-2.3zm-3.15 1.9A6.6 6.6 0 0 1 4 3a6.9 6.9 0 0 1 2-1 10.4 10.4 0 0 0-.86 1.66M3 3.83a7.6 7.6 0 0 0 1.75 1 11 11 0 0 0-.43 2.54h-3A6 6 0 0 1 3 3.83M1.28 8.62h3a11 11 0 0 0 .43 2.54 7.6 7.6 0 0 0-1.75 1 6 6 0 0 1-1.68-3.54m3.86 3.72A10.4 10.4 0 0 0 6 14a6.9 6.9 0 0 1-2-1 6.6 6.6 0 0 1 1.14-.66m2.57 1.9a9.8 9.8 0 0 1-1.38-2.3 7.4 7.4 0 0 1 3.34 0 9.8 9.8 0 0 1-1.38 2.3zm3.15-1.9a6.6 6.6 0 0 1 1.19.66 7.2 7.2 0 0 1-2 1 11.5 11.5 0 0 0 .81-1.66m2.14-.17a7.6 7.6 0 0 0-1.75-1 10.8 10.8 0 0 0 .43-2.54h3A6 6 0 0 1 13 12.17"/></svg>
+        </div>
+        <h4>Escribes 3 dominios</h4>
+        <p>Marcas o competidores que ya conoces de tu categoría.</p>
+      </div>
+      <div class="step">
+        <span class="step__num">02</span>
+        <div class="step__icon">
+          <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M1.75 13.25V1.5H.5v12a1.24 1.24 0 0 0 1.22 1H15.5v-1.25z"/><path d="M3.15 8H4.4v3.9H3.15zm3.26-4h1.26v7.9H6.41zm3.27 2h1.25v5.9H9.68zm3.27-3.5h1.25v9.4h-1.25z"/></svg>
+        </div>
+        <h4>El radar investiga</h4>
+        <p>Ads en Meta/TikTok/Google, tráfico, plataforma y contacto ejecutivo.</p>
+      </div>
+      <div class="step">
+        <span class="step__num">03</span>
+        <div class="step__icon">
+          <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M12.32 8a3 3 0 0 0-2-.7H5.63A1.59 1.59 0 0 1 4 5.69a2 2 0 0 1 0-.25 1.59 1.59 0 0 1 1.63-1.33h4.62a1.59 1.59 0 0 1 1.57 1.33h1.5a3.08 3.08 0 0 0-3.07-2.83H8.67V.31H7.42v2.3H5.63a3.08 3.08 0 0 0-3.07 2.83 2 2 0 0 0 0 .25 3.07 3.07 0 0 0 3.07 3.07h4.74A1.59 1.59 0 0 1 12 10.35a2 2 0 0 1 0 .34 1.59 1.59 0 0 1-1.55 1.24h-4.7a1.59 1.59 0 0 1-1.55-1.24H2.69a3.08 3.08 0 0 0 3.06 2.73h1.67v2.27h1.25v-2.27h1.7a3.08 3.08 0 0 0 3.06-2.73v-.34A3.06 3.06 0 0 0 12.32 8"/></svg>
+        </div>
+        <h4>Ves la facturación estimada</h4>
+        <p>Nunca un lead sin número — siempre un estimado, aunque no haya datos exactos.</p>
+      </div>
+      <div class="step">
+        <span class="step__num">04</span>
+        <div class="step__icon">
+          <svg class="nimbus-icon" fill="currentColor" viewBox="0 0 16 16"><path d="M5.1 7.93A2.87 2.87 0 0 0 7.87 5 2.88 2.88 0 0 0 5.1 2a2.88 2.88 0 0 0-2.78 3A2.88 2.88 0 0 0 5.1 7.93m0-4.67A1.62 1.62 0 0 1 6.62 5 1.63 1.63 0 0 1 5.1 6.68 1.63 1.63 0 0 1 3.58 5 1.62 1.62 0 0 1 5.1 3.26m7.19 5.05a2.39 2.39 0 0 0 2.3-2.46 2.39 2.39 0 0 0-2.3-2.47A2.39 2.39 0 0 0 10 5.85a2.39 2.39 0 0 0 2.29 2.46m0-3.68a1.15 1.15 0 0 1 1.05 1.22 1.15 1.15 0 0 1-1.05 1.21 1.15 1.15 0 0 1-1.06-1.21 1.15 1.15 0 0 1 1.06-1.22m-.07 4.93a3.85 3.85 0 0 0-3.07 1.51A5.21 5.21 0 0 0 5.1 9.18 5 5 0 0 0 0 14h1.25a3.72 3.72 0 0 1 3.85-3.57A3.71 3.71 0 0 1 8.94 14h1.25a4.5 4.5 0 0 0-.32-1.69 2.54 2.54 0 0 1 2.35-1.5 2.44 2.44 0 0 1 2.53 2.33V14H16v-.86a3.69 3.69 0 0 0-3.78-3.58"/></svg>
+        </div>
+        <h4>Asignas a una agencia</h4>
+        <p>Un clic, y queda registrado quién se hace cargo de ese lead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="theme-blue-section">
+  <div class="section-inner">
+    <span class="section-eyebrow" style="color:#7db4ff;">Qué te dice de cada marca</span>
+    <h2 class="section-title">Seis señales, no una corazonada</h2>
+    <p class="section-sub">Cada candidato llega con evidencia concreta, no solo con "se ve que le va bien".</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-card__icon"><svg class="nimbus-icon nimbus-icon--lg" fill="currentColor" viewBox="0 0 16 16"><path d="M12.32 8a3 3 0 0 0-2-.7H5.63A1.59 1.59 0 0 1 4 5.69a2 2 0 0 1 0-.25 1.59 1.59 0 0 1 1.63-1.33h4.62a1.59 1.59 0 0 1 1.57 1.33h1.5a3.08 3.08 0 0 0-3.07-2.83H8.67V.31H7.42v2.3H5.63a3.08 3.08 0 0 0-3.07 2.83 2 2 0 0 0 0 .25 3.07 3.07 0 0 0 3.07 3.07h4.74A1.59 1.59 0 0 1 12 10.35a2 2 0 0 1 0 .34 1.59 1.59 0 0 1-1.55 1.24h-4.7a1.59 1.59 0 0 1-1.55-1.24H2.69a3.08 3.08 0 0 0 3.06 2.73h1.67v2.27h1.25v-2.27h1.7a3.08 3.08 0 0 0 3.06-2.73v-.34A3.06 3.06 0 0 0 12.32 8"/></svg></div>
+        <h4>Facturación estimada</h4>
+        <p>Siempre un número en pesos, calculado con la mejor señal disponible — nunca en blanco.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><svg class="nimbus-icon nimbus-icon--lg" fill="currentColor" viewBox="0 0 16 16"><path d="M13.408 8.648V7.351H1.5v1.297z"/><path d="M14.388 8.357a.63.63 0 0 0-.086-.816L8.513 2l-.958.918L12.863 8l-5.308 5.08.478.46.48.459 5.789-5.541z"/></svg></div>
+        <h4>Presencia real en ads</h4>
+        <p>Meta Ad Library, TikTok y Google Ads Transparency revisados por separado, con link cuando existe.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><svg class="nimbus-icon nimbus-icon--lg" fill="currentColor" viewBox="0 0 16 16"><path d="M14.224 1.5c1.036 0 1.876.84 1.876 1.877V14.5h-1.251V3.377a.626.626 0 0 0-.625-.626H2.977a.626.626 0 0 0-.626.626V14.5H1.1V3.377C1.1 2.34 1.94 1.5 2.977 1.5zM8.6 7.474c1.72 0 3.065 1.455 3.065 3.185V14.5h-1.25v-3.84c0-1.098-.84-1.935-1.815-1.935-.974 0-1.814.837-1.814 1.934V14.5h-1.25v-3.84c0-1.731 1.344-3.186 3.064-3.186m5.498-1.814H3.089V4.358h11.009z"/></svg></div>
+        <h4>Plataforma actual</h4>
+        <p>Shopify, VTEX, sitio propio o solo redes — para saber si el pitch es de migración o de primera adopción.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><svg class="nimbus-icon nimbus-icon--lg" fill="currentColor" viewBox="0 0 16 16"><path d="M5.1 7.93A2.87 2.87 0 0 0 7.87 5 2.88 2.88 0 0 0 5.1 2a2.88 2.88 0 0 0-2.78 3A2.88 2.88 0 0 0 5.1 7.93m0-4.67A1.62 1.62 0 0 1 6.62 5 1.63 1.63 0 0 1 5.1 6.68 1.63 1.63 0 0 1 3.58 5 1.62 1.62 0 0 1 5.1 3.26m7.19 5.05a2.39 2.39 0 0 0 2.3-2.46 2.39 2.39 0 0 0-2.3-2.47A2.39 2.39 0 0 0 10 5.85a2.39 2.39 0 0 0 2.29 2.46m0-3.68a1.15 1.15 0 0 1 1.05 1.22 1.15 1.15 0 0 1-1.05 1.21 1.15 1.15 0 0 1-1.06-1.21 1.15 1.15 0 0 1 1.06-1.22m-.07 4.93a3.85 3.85 0 0 0-3.07 1.51A5.21 5.21 0 0 0 5.1 9.18 5 5 0 0 0 0 14h1.25a3.72 3.72 0 0 1 3.85-3.57A3.71 3.71 0 0 1 8.94 14h1.25a4.5 4.5 0 0 0-.32-1.69 2.54 2.54 0 0 1 2.35-1.5 2.44 2.44 0 0 1 2.53 2.33V14H16v-.86a3.69 3.69 0 0 0-3.78-3.58"/></svg></div>
+        <h4>Contacto ejecutivo</h4>
+        <p>Nombre y perfil de LinkedIn del CEO, founder o gerente de ecommerce, cuando existe públicamente.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><svg class="nimbus-icon nimbus-icon--lg" fill="currentColor" viewBox="0 0 16 16"><path d="M6.53 9.02 4.58 7.07l-.88.89 2.83 2.83.88-.89 4.78-4.77-.89-.88z"/><path d="M8 .5A7.77 7.77 0 0 0 0 8a7.77 7.77 0 0 0 8 7.5A7.77 7.77 0 0 0 16 8 7.77 7.77 0 0 0 8 .5m0 13.75A6.52 6.52 0 0 1 1.25 8 6.52 6.52 0 0 1 8 1.75 6.52 6.52 0 0 1 14.75 8 6.52 6.52 0 0 1 8 14.25"/></svg></div>
+        <h4>Guion listo para usar</h4>
+        <p>Ángulo de venta, mensaje de primer contacto y objeciones probables — copiar y pegar, no redactar desde cero.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><svg class="nimbus-icon nimbus-icon--lg" fill="currentColor" viewBox="0 0 16 16"><path d="M1.75 13.25V1.5H.5v12a1.24 1.24 0 0 0 1.22 1H15.5v-1.25z"/><path d="M3.15 8H4.4v3.9H3.15zm3.26-4h1.26v7.9H6.41zm3.27 2h1.25v5.9H9.68zm3.27-3.5h1.25v9.4h-1.25z"/></svg></div>
+        <h4>Tráfico y % pagado</h4>
+        <p>Visitas mensuales estimadas y qué porción de ese tráfico viene de canales pagados.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="theme-dark2">
+  <div class="final-cta">
+    <h2>¿Listo para revisar los candidatos de hoy?</h2>
+    <p>Abre la herramienta, escribe tus semillas, y en minutos tienes una lista lista para repartir entre tus 14 agencias.</p>
+    <a href="https://claude.ai/artifacts/latest/0e7b0ff5-2336-4f20-8aea-7d95056b2751" target="_blank" class="btn-primary" id="final-cta-link">Abrir el radar de leads →</a>
+  </div>
+</section>
+
+<footer>
+  Radar de Leads Pautando — Herramienta interna de Partners MX, Tiendanube.
+</footer>
+
+<script>
+  document.querySelectorAll('section').forEach(el => el.classList.add('reveal'));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
