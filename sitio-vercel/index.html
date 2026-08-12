@@ -110,7 +110,8 @@
     }).join('');
   }
 
-  fetch('leads.json?_=' + Date.now())
+  const basePath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+  fetch(basePath + 'leads.json?_=' + Date.now())
     .then(r => {
       if(!r.ok) throw new Error('No se pudo cargar leads.json');
       return r.json();
