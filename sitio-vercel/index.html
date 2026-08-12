@@ -12,6 +12,8 @@
     background: radial-gradient(ellipse at 12% -10%, #0050c4 0%, #000b19 42%, #000b19 100%);
     color: #ffffff; min-height: 100vh; padding: 32px 20px 60px;
   }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  a { color: #7db4ff; }
   .wrap { max-width: 1100px; margin: 0 auto; }
   .header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
   .wordmark { font-size: 17px; font-weight: 800; }
@@ -20,27 +22,57 @@
   .sub { color: #9ca3af; font-size: 13px; margin-bottom: 26px; }
   .updated { font-size: 11px; color: #6b7280; margin-bottom: 26px; }
 
-  .card {
+  /* ---- Card de lead: mismo diseño que la app interna (rl-row) ---- */
+  .rl-table-wrap { display: flex; flex-direction: column; gap: 12px; }
+  .rl-row {
     background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
-    padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    padding: 18px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: all 0.2s;
   }
-  .row-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .avatar {
-    width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #0050c3, #3d7fe0);
-    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
+  .rl-row:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); }
+
+  .rl-row-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .rl-brand { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+  .rl-avatar {
+    width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #0050c3, #3d7fe0); color: white;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
+    flex-shrink: 0;
   }
-  .brand-name { font-weight: 700; font-size: 14.5px; }
-  .domain { font-size: 12px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
-  .domain a { color: #6b7280; text-decoration: none; }
-  .meta { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
-  .meta-item { font-size: 12px; color: #9ca3af; }
-  .meta-item b { color: #fff; }
-  .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
-  .badge.nuevo { background: rgba(0,80,195,0.18); color: #7db4ff; }
-  .badge.asignado { background: rgba(255,209,102,0.14); color: #ffd166; }
-  .contact { font-size: 12px; color: #cbd2dc; margin-top: 10px; }
-  .contact a { color: #7db4ff; }
+  .rl-brand-name { font-weight: 700; font-size: 14.5px; color: #ffffff; }
+  .rl-domain { font-size: 12px; color: #6b7280; font-family: 'JetBrains Mono', monospace; }
+  .rl-domain a { color: #6b7280; text-decoration: none; }
+
+  .rl-meta { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+  .rl-meta-item { font-size: 12px; color: #9ca3af; }
+  .rl-meta-item b { color: #ffffff; font-weight: 700; }
+
+  .rl-badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+  .rl-badge.plat-none { background: rgba(255,167,122,0.14); color: #ffb27a; }
+  .rl-badge.plat-custom { background: rgba(255,107,107,0.14); color: #ff9494; }
+  .rl-badge.plat-shopify { background: rgba(89,217,138,0.14); color: #6be3a0; }
+  .rl-badge.plat-vtex { background: rgba(255,105,180,0.16); color: #ff8fc4; }
+  .rl-badge.plat-woocommerce { background: rgba(160,100,255,0.16); color: #b892ff; }
+  .rl-badge.plat-other { background: rgba(255,255,255,0.08); color: #b8c0cc; }
+  .rl-badge.plat-unknown { background: rgba(255,255,255,0.06); color: #6b7280; }
+  .rl-badge.estado-nuevo { background: rgba(0,80,195,0.18); color: #7db4ff; }
+  .rl-badge.estado-asignado { background: rgba(255,209,102,0.14); color: #ffd166; }
+
+  .rl-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rl-btn {
+    background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px; padding: 7px 14px; font-weight: 700; font-size: 12px; cursor: pointer;
+    white-space: nowrap; transition: all 0.2s;
+  }
+  .rl-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+  .rl-detail {
+    margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,0.12);
+    font-size: 13px; line-height: 1.6; color: #cbd2dc; display: flex; flex-direction: column; gap: 8px;
+  }
+  .rl-detail a { word-break: break-all; }
+
   .empty { text-align: center; padding: 60px 20px; color: #6b7280; }
   .error { text-align: center; padding: 60px 20px; color: #ff8a8a; }
   footer { text-align: center; color: #4b5875; font-size: 11px; margin-top: 40px; }
@@ -53,10 +85,10 @@
     <span class="tag">Partners MX</span>
   </div>
   <h1>Radar de Leads Pautando — Reporte</h1>
-  <div class="sub">Vista de solo lectura. Para buscar candidatos nuevos o generar guiones, usa la app interactiva en Claude.</div>
+  <div class="sub">Vista de solo lectura. Para buscar candidatos nuevos, asignar o generar guiones, usa la app interactiva en Claude.</div>
   <div class="updated" id="updated"></div>
 
-  <div id="lista"></div>
+  <div class="rl-table-wrap" id="lista"></div>
 
   <footer>Generado desde el Radar de Leads Pautando · Tiendanube Partners MX</footer>
 </div>
@@ -69,10 +101,81 @@
     document.querySelector('.sub').textContent = 'Vista de solo lectura, exclusiva para ' + agenciaFiltro + '.';
   }
 
-  function badgeEstado(e){
-    if(e === 'Asignado') return '<span class="badge asignado">Asignado</span>';
-    return '<span class="badge nuevo">Nuevo</span>';
+  let infoAbierta = {};
+
+  function linkify(text){
+    if(!text) return '';
+    const escaped = String(text).replace(/</g,'&lt;');
+    const urlPattern = /(https?:\/\/[^\s,)]+|(?:www\.)?[a-z0-9-]+\.(?:com|mx|co|net|org|io)(?:\.[a-z]{2,3})?(?:\/[^\s,)]*)?)/gi;
+    return escaped.replace(urlPattern, (match) => {
+      const href = match.startsWith('http') ? match : 'https://' + match;
+      return `<a href="${href}" target="_blank" rel="noopener" style="color:#7db4ff; text-decoration:underline;">${match}</a>`;
+    });
   }
+
+  function iniciales(dominio){
+    const marca = (dominio||'?').replace(/^www\./,'').split('.')[0];
+    return marca.substring(0,2).toUpperCase();
+  }
+
+  function badgeEstado(e){
+    const cls = e === 'Asignado' ? 'estado-asignado' : 'estado-nuevo';
+    return '<span class="rl-badge '+cls+'">'+ (e || 'Nuevo') + '</span>';
+  }
+
+  function badgePlataforma(p){
+    if(!p) return '<span class="rl-badge plat-unknown">Sin revisar</span>';
+    const low = p.toLowerCase();
+    if(low.includes('solo rrss') || low.includes('sin sitio')) return '<span class="rl-badge plat-none">Sin sitio — solo RRSS</span>';
+    if(low.includes('sitio propio')) return '<span class="rl-badge plat-custom">Desarrollo propio</span>';
+    if(low.includes('shopify')) return '<span class="rl-badge plat-shopify">Shopify</span>';
+    if(low.includes('vtex')) return '<span class="rl-badge plat-vtex">VTEX</span>';
+    if(low.includes('woocommerce')) return '<span class="rl-badge plat-woocommerce">WooCommerce</span>';
+    return '<span class="rl-badge plat-other">'+ p + '</span>';
+  }
+
+  function detectarCanal(texto, nombre){
+    if(!texto) return 'unknown';
+    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase());
+    if(idx === -1) return 'unknown';
+    const ctx = texto.substring(idx, idx+55).toLowerCase();
+    if(/no encontrado|:\s*no\b|no,/.test(ctx)) return 'inactive';
+    return 'active';
+  }
+
+  function extraerLink(texto, nombre){
+    if(!texto) return null;
+    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase());
+    if(idx === -1) return null;
+    const ctx = texto.substring(idx, idx+140);
+    const m = ctx.match(/(https?:\/\/[^\s,)\]]+|[a-z0-9-]+\.(?:com|mx)[^\s,)\]]*)/i);
+    return m ? (m[0].startsWith('http') ? m[0] : 'https://'+m[0]) : null;
+  }
+
+  function iconoCanal(letra, color, estado, link){
+    const opacidad = estado === 'active' ? '1' : (estado === 'inactive' ? '0.25' : '0.4');
+    const contenido = `<span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:7px; background:${color}; color:#fff; font-size:11px; font-weight:800; opacity:${opacidad};" title="${estado === 'active' ? 'Pautando activo' : (estado === 'inactive' ? 'No encontrado' : 'Sin revisar')}">${letra}</span>`;
+    return (estado === 'active' && link) ? `<a href="${link}" target="_blank" rel="noopener">${contenido}</a>` : contenido;
+  }
+
+  function renderAdsIconos(texto){
+    if(!texto) return '';
+    const canales = [
+      { nombre: 'Meta', letra: 'M', color: '#0866ff' },
+      { nombre: 'Google', letra: 'G', color: '#ea4335' },
+      { nombre: 'TikTok', letra: 'T', color: '#000000' }
+    ];
+    return canales.map(c => {
+      const estado = detectarCanal(texto, c.nombre);
+      const link = extraerLink(texto, c.nombre);
+      return iconoCanal(c.letra, c.color, estado, link);
+    }).join(' ');
+  }
+
+  window.rlToggleInfo = function(dominio){
+    infoAbierta[dominio] = !infoAbierta[dominio];
+    render(window.__leads || []);
+  };
 
   function render(leads){
     const cont = document.getElementById('lista');
@@ -82,30 +185,45 @@
       return;
     }
     cont.innerHTML = leadsAMostrar.map(c => {
-      const inicial = (c.marca || '?').substring(0,2).toUpperCase();
-      const contactoPartes = [];
-      if(c.contacto_nombre) contactoPartes.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
-      if(c.contacto_telefono) contactoPartes.push('Tel: ' + c.contacto_telefono);
-      if(c.contacto_correo) contactoPartes.push(c.contacto_correo);
-      if(c.contacto_linkedin) contactoPartes.push('<a href="https://'+c.contacto_linkedin.replace(/^https?:\/\//,'')+'" target="_blank">LinkedIn</a>');
-      return `<div class="card">
-        <div class="row-top">
-          <div class="brand">
-            <div class="avatar">${inicial}</div>
+      const verInfo = !!infoAbierta[c.dominio];
+      let detalleHtml = '';
+      if(verInfo){
+        const filas = [];
+        if(c.visitas_mensuales_estimadas) filas.push(`<div><span style="color:#6b7280;">Visitas/mes:</span> <b>${c.visitas_mensuales_estimadas}</b></div>`);
+        if(c.porcentaje_trafico_pagado) filas.push(`<div><span style="color:#6b7280;">Tráfico pagado:</span> <b>${c.porcentaje_trafico_pagado}</b></div>`);
+        if(c.ads_activos) filas.push(`<div><span style="color:#6b7280;">Ads (detalle):</span> ${linkify(c.ads_activos)}</div>`);
+        if(c.contacto_nombre || c.contacto_telefono || c.contacto_correo || c.contacto_linkedin){
+          const partes = [];
+          if(c.contacto_nombre) partes.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
+          if(c.contacto_telefono) partes.push('📞 '+c.contacto_telefono);
+          if(c.contacto_correo) partes.push('✉️ '+c.contacto_correo);
+          if(c.contacto_linkedin) partes.push(linkify(c.contacto_linkedin));
+          filas.push(`<div><span style="color:#6b7280;">Contacto:</span> ${partes.join(' · ')}</div>`);
+        }
+        if(c.nota_calificacion) filas.push(`<div><span style="color:#6b7280;">Nota:</span> ${c.nota_calificacion}</div>`);
+        detalleHtml = `<div class="rl-detail">${filas.join('') || 'Sin información adicional.'}</div>`;
+      }
+      return `<div class="rl-row">
+        <div class="rl-row-top">
+          <div class="rl-brand">
+            <div class="rl-avatar">${iniciales(c.dominio)}</div>
             <div>
-              <div class="brand-name">${c.marca}</div>
-              <div class="domain"><a href="https://${c.dominio}" target="_blank">${c.dominio}</a></div>
+              <div class="rl-brand-name">${c.marca}</div>
+              <div class="rl-domain"><a href="https://${c.dominio}" target="_blank" rel="noopener">${c.dominio}</a></div>
             </div>
           </div>
-          ${badgeEstado(c.estado)}
+          <div class="rl-meta">
+            ${c.facturacion_estimada_mxn ? `<div class="rl-meta-item">Facturación est. <b>$${Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')} MXN/mes</b></div>` : ''}
+            ${c.ads_activos ? `<div class="rl-meta-item" style="display:flex; align-items:center; gap:6px;">Ads: ${renderAdsIconos(c.ads_activos)}</div>` : ''}
+            <div class="rl-meta-item">${badgePlataforma(c.plataforma)}</div>
+            <div class="rl-meta-item">${badgeEstado(c.estado)}</div>
+            ${c.estado==='Asignado' && c.agencia_asignada ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
+          </div>
+          <div class="rl-actions">
+            <button class="rl-btn" onclick="rlToggleInfo('${c.dominio}')">${verInfo?'Ocultar':'Más'} info</button>
+          </div>
         </div>
-        <div class="meta">
-          ${c.facturacion_estimada_mxn ? `<div class="meta-item">Facturación est. <b>$${Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')} MXN/mes</b></div>` : ''}
-          ${c.plataforma ? `<div class="meta-item">${c.plataforma}</div>` : ''}
-          ${c.agencia_asignada ? `<div class="meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
-        </div>
-        ${contactoPartes.length ? `<div class="contact">${contactoPartes.join(' · ')}</div>` : ''}
-        ${c.nota_calificacion ? `<div class="contact" style="color:#6b7280; margin-top:6px;">${c.nota_calificacion}</div>` : ''}
+        ${detalleHtml}
       </div>`;
     }).join('');
   }
@@ -120,6 +238,7 @@
       const leads = Array.isArray(data) ? data : (data.leads || []);
       const actualizado = Array.isArray(data) ? null : data.actualizado;
       document.getElementById('updated').textContent = 'Actualizado: ' + (actualizado || new Date().toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' }));
+      window.__leads = leads;
       render(leads);
     })
     .catch(err => {
