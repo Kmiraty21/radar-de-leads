@@ -138,6 +138,20 @@
     return '<span class="rl-badge '+cls+'">'+ (e || 'Nuevo') + '</span>';
   }
 
+  const PIPELINE_COLORES = {
+    'Lead': { bg: 'rgba(255,255,255,0.08)', color: '#b8c0cc' },
+    'Reunión': { bg: 'rgba(0,80,195,0.18)', color: '#7db4ff' },
+    'Negociando': { bg: 'rgba(255,209,102,0.14)', color: '#ffd166' },
+    'Ganado': { bg: 'rgba(89,217,138,0.14)', color: '#6be3a0' },
+    'Perdido': { bg: 'rgba(255,107,107,0.14)', color: '#ff9494' }
+  };
+
+  function badgePipeline(status){
+    const s = status || 'Lead';
+    const c = PIPELINE_COLORES[s] || PIPELINE_COLORES['Lead'];
+    return `<span class="rl-badge" style="background:${c.bg}; color:${c.color};">${s}</span>`;
+  }
+
   function badgePlataforma(p){
     if(!p) return '<span class="rl-badge plat-unknown">Sin revisar</span>';
     const low = p.toLowerCase();
@@ -230,8 +244,11 @@
     const estado = select.value;
     const lead = (window.__leads || []).find(l => l.dominio === dominio);
     if(lead) lead.pipeline_status = estado;
+    render(window.__leads || []); // refleja la etiqueta nueva de inmediato
 
-    select.disabled = true;
+    // El select original se reemplazo al re-renderizar; buscamos el nodo fresco para el feedback
+    const buscarSelect = () => document.querySelector(`.rl-pipeline-select[data-dominio="${dominio}"]`);
+
     fetch('/api/pipeline', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -239,15 +256,14 @@
     })
       .then(r => r.json().then(data => { if(!r.ok) throw new Error(data.error || 'Error al guardar'); }))
       .then(() => {
-        select.style.borderColor = '#59d98a';
-        setTimeout(() => { select.style.borderColor = ''; }, 1200);
+        const sel = buscarSelect();
+        if(sel){ sel.style.borderColor = '#59d98a'; setTimeout(() => { if(sel) sel.style.borderColor = ''; }, 1200); }
       })
       .catch(err => {
-        select.style.borderColor = '#ff6b6b';
-        select.title = 'No se pudo guardar: ' + err.message;
+        const sel = buscarSelect();
+        if(sel){ sel.style.borderColor = '#ff6b6b'; sel.title = 'No se pudo guardar: ' + err.message; }
         console.error('Error guardando pipeline_status:', err);
-      })
-      .finally(() => { select.disabled = false; });
+      });
   };
 
   function escapeAttr(s){
@@ -361,6 +377,7 @@
             ${c.ads_activos ? `<div class="rl-meta-item" style="display:flex; align-items:center; gap:6px;">Ads: ${renderAdsIconos(c.ads_activos)}</div>` : ''}
             <div class="rl-meta-item">${badgePlataforma(c.plataforma)}</div>
             <div class="rl-meta-item">${badgeEstado(c.estado)}</div>
+            <div class="rl-meta-item">${badgePipeline(c.pipeline_status)}</div>
             ${c.estado==='Asignado' && c.agencia_asignada ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
           </div>
           <div class="rl-actions">
