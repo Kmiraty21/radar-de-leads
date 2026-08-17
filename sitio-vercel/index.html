@@ -223,11 +223,31 @@
   };
 
   const PIPELINE_OPCIONES = ['Lead', 'Reunión', 'Negociando', 'Ganado', 'Perdido'];
+  const basePath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
 
   window.rlCambiarPipeline = function(select){
     const dominio = select.dataset.dominio;
+    const estado = select.value;
     const lead = (window.__leads || []).find(l => l.dominio === dominio);
-    if(lead) lead.pipeline_status = select.value;
+    if(lead) lead.pipeline_status = estado;
+
+    select.disabled = true;
+    fetch(basePath + 'api/pipeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dominio, estado })
+    })
+      .then(r => r.json().then(data => { if(!r.ok) throw new Error(data.error || 'Error al guardar'); }))
+      .then(() => {
+        select.style.borderColor = '#59d98a';
+        setTimeout(() => { select.style.borderColor = ''; }, 1200);
+      })
+      .catch(err => {
+        select.style.borderColor = '#ff6b6b';
+        select.title = 'No se pudo guardar: ' + err.message;
+        console.error('Error guardando pipeline_status:', err);
+      })
+      .finally(() => { select.disabled = false; });
   };
 
   function escapeAttr(s){
@@ -357,7 +377,6 @@
     }).join('');
   }
 
-  const basePath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
   fetch(basePath + 'leads.json?_=' + Date.now())
     .then(r => {
       if(!r.ok) throw new Error('No se pudo cargar leads.json');
@@ -369,6 +388,18 @@
       document.getElementById('updated').textContent = 'Actualizado: ' + (actualizado || new Date().toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' }));
       window.__leads = leads;
       render(leads);
+
+      // Aplica los status de pipeline guardados en Vercel KV (si los hay), sin bloquear el render inicial
+      fetch(basePath + 'api/pipeline')
+        .then(r => r.ok ? r.json() : {})
+        .then(mapa => {
+          Object.keys(mapa || {}).forEach(dominio => {
+            const lead = leads.find(l => l.dominio === dominio);
+            if(lead) lead.pipeline_status = mapa[dominio];
+          });
+          render(leads);
+        })
+        .catch(err => console.warn('No se pudo cargar el status de pipeline guardado:', err.message));
     })
     .catch(err => {
       document.getElementById('lista').innerHTML = '<div class="error">No se pudo cargar leads.json (' + err.message + ')</div>';
