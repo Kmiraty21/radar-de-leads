@@ -59,13 +59,27 @@
   .rl-badge.estado-nuevo { background: rgba(0,80,195,0.18); color: #7db4ff; }
   .rl-badge.estado-asignado { background: rgba(255,209,102,0.14); color: #ffd166; }
 
-  .rl-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rl-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .rl-btn {
     background: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.25);
     border-radius: 100px; padding: 7px 14px; font-weight: 700; font-size: 12px; cursor: pointer;
     white-space: nowrap; transition: all 0.2s;
   }
   .rl-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+
+  .rl-pipeline-select {
+    background: rgba(0,0,0,0.3); color: #ffffff; border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px; padding: 6px 12px; font-weight: 700; font-size: 12px; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .rl-pipeline-select option { color: #14213D; }
+
+  .rl-copy-btn {
+    background: transparent; color: #9ca3af; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px; padding: 3px 10px; font-weight: 700; font-size: 10.5px; cursor: pointer;
+    white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
+  }
+  .rl-copy-btn:hover { background: rgba(255,255,255,0.08); color: #ffffff; border-color: rgba(255,255,255,0.4); }
 
   .rl-detail {
     margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,0.12);
@@ -135,22 +149,47 @@
     return '<span class="rl-badge plat-other">'+ p + '</span>';
   }
 
+  const CANALES_CONOCIDOS = ['Meta:', 'TikTok:', 'Google:'];
+
+  // Recorta el texto de ads_activos a solo la clausula del canal pedido (hasta el
+  // siguiente canal o punto y coma), para no mezclar datos de Meta/TikTok/Google entre si.
+  function extraerSegmentoCanal(texto, nombre){
+    if(!texto) return null;
+    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase() + ':');
+    if(idx === -1) return null;
+    const resto = texto.substring(idx);
+    let fin = resto.length;
+    const idxPuntoYComa = resto.indexOf(';');
+    if(idxPuntoYComa !== -1) fin = Math.min(fin, idxPuntoYComa);
+    CANALES_CONOCIDOS.forEach(canal => {
+      if(canal.toLowerCase() === nombre.toLowerCase()+':') return;
+      const i = resto.toLowerCase().indexOf(canal.toLowerCase());
+      if(i > 0) fin = Math.min(fin, i);
+    });
+    return resto.substring(0, fin);
+  }
+
   function detectarCanal(texto, nombre){
-    if(!texto) return 'unknown';
-    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase());
-    if(idx === -1) return 'unknown';
-    const ctx = texto.substring(idx, idx+55).toLowerCase();
-    if(/no encontrado|:\s*no\b|no,/.test(ctx)) return 'inactive';
+    const seg = extraerSegmentoCanal(texto, nombre);
+    if(!seg) return 'unknown';
+    if(/no encontrado|no confirmado|:\s*no\b|no,/i.test(seg)) return 'inactive';
     return 'active';
   }
 
   function extraerLink(texto, nombre){
-    if(!texto) return null;
-    const idx = texto.toLowerCase().indexOf(nombre.toLowerCase());
-    if(idx === -1) return null;
-    const ctx = texto.substring(idx, idx+140);
-    const m = ctx.match(/(https?:\/\/[^\s,)\]]+|[a-z0-9-]+\.(?:com|mx)[^\s,)\]]*)/i);
-    return m ? (m[0].startsWith('http') ? m[0] : 'https://'+m[0]) : null;
+    const seg = extraerSegmentoCanal(texto, nombre);
+    if(!seg) return null;
+    // 1. URL explicita a una red social conocida (evita enlazar al sitio propio de la marca)
+    const urlSocial = seg.match(/(https?:\/\/[^\s,)\]]+|(?:www\.)?(?:facebook|instagram|tiktok)\.com\/[^\s,)\]]+)/i);
+    if(urlSocial) return urlSocial[0].startsWith('http') ? urlSocial[0] : 'https://' + urlSocial[0];
+    // 2. @handle mencionado en la clausula de este canal especifico
+    const handleMatch = seg.match(/@([a-zA-Z0-9_.]+)/);
+    if(handleMatch){
+      const handle = handleMatch[1].replace(/\.$/, '');
+      if(nombre === 'TikTok') return 'https://www.tiktok.com/@' + handle;
+      if(nombre === 'Meta') return 'https://www.instagram.com/' + handle;
+    }
+    return null;
   }
 
   function iconoCanal(letra, color, estado, link){
@@ -183,6 +222,50 @@
     render(window.__leads || []);
   };
 
+  const PIPELINE_OPCIONES = ['Lead', 'Reunión', 'Negociando', 'Ganado', 'Perdido'];
+
+  window.rlCambiarPipeline = function(select){
+    const dominio = select.dataset.dominio;
+    const lead = (window.__leads || []).find(l => l.dominio === dominio);
+    if(lead) lead.pipeline_status = select.value;
+  };
+
+  function escapeAttr(s){
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+
+  function botonCopiar(texto){
+    return `<button class="rl-copy-btn" data-copy="${escapeAttr(texto)}" onclick="rlCopiarSeccion(this)">Copiar</button>`;
+  }
+
+  function copiarAlPortapapeles(texto){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(texto).catch(() => copiarConFallback(texto));
+    }
+    copiarConFallback(texto);
+    return Promise.resolve();
+  }
+
+  function copiarConFallback(texto){
+    const ta = document.createElement('textarea');
+    ta.value = texto;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  window.rlCopiarSeccion = function(btn){
+    const texto = btn.dataset.copy || '';
+    const original = btn.textContent;
+    copiarAlPortapapeles(texto).then(() => {
+      btn.textContent = 'Copiado ✓';
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    });
+  };
+
   function formatearGuion(textoOriginal){
     if(!textoOriginal) return '';
     const colorTexto = '#cbd2dc';
@@ -195,7 +278,9 @@
     };
     const partes = textoOriginal.split(patronHeaders);
     if(partes.length < 2){
-      return `<p style="color:${colorTexto}; line-height:1.65;">${linkify(textoOriginal.trim())}</p>`;
+      const texto = textoOriginal.trim();
+      return `<div style="display:flex; justify-content:flex-end; margin-bottom:6px;">${botonCopiar(texto)}</div>
+        <p style="color:${colorTexto}; line-height:1.65;">${linkify(texto)}</p>`;
     }
     let html = '';
     if(partes[0] && partes[0].trim()) html += `<p style="margin-bottom:14px; color:${colorTexto}; line-height:1.6;">${linkify(partes[0].trim())}</p>`;
@@ -204,9 +289,9 @@
       const contenido = (partes[i+1]||'').trim();
       const info = infoPorHeader[clave] || { icono: '📌', titulo: partes[i], color: '#9ca3af' };
       html += `<div style="margin-bottom:18px;">
-        <div style="margin-bottom:8px;">
-          <span style="font-size:13px;">${info.icono}</span>
-          <span style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.07em; color:${info.color};">&nbsp;${info.titulo}</span>
+        <div style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+          <div><span style="font-size:13px;">${info.icono}</span><span style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.07em; color:${info.color};">&nbsp;${info.titulo}</span></div>
+          ${botonCopiar(contenido)}
         </div>
         <div style="color:${colorTexto}; line-height:1.65; padding-left:12px; border-left:2px solid ${colorBorde};">${linkify(contenido)}</div>
       </div>`;
@@ -259,6 +344,9 @@
             ${c.estado==='Asignado' && c.agencia_asignada ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
           </div>
           <div class="rl-actions">
+            <select class="rl-pipeline-select" data-dominio="${c.dominio}" onchange="rlCambiarPipeline(this)">
+              ${PIPELINE_OPCIONES.map(op => `<option value="${op}" ${ (c.pipeline_status||'Lead')===op ? 'selected' : ''}>${op}</option>`).join('')}
+            </select>
             <button class="rl-btn" onclick="rlToggleInfo('${c.dominio}')">${verInfo?'Ocultar':'Más'} info</button>
             ${c.guion ? `<button class="rl-btn" onclick="rlToggleGuion('${c.dominio}')">${verGuion?'Ocultar':'Ver'} guion</button>` : ''}
           </div>
