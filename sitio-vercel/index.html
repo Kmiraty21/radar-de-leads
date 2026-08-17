@@ -232,7 +232,7 @@
     if(lead) lead.pipeline_status = estado;
 
     select.disabled = true;
-    fetch(basePath + 'api/pipeline', {
+    fetch('/api/pipeline', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ dominio, estado })
@@ -390,7 +390,7 @@
       render(leads);
 
       // Aplica los status de pipeline guardados en Vercel KV (si los hay), sin bloquear el render inicial
-      fetch(basePath + 'api/pipeline')
+      fetch('/api/pipeline')
         .then(r => r.ok ? r.json() : {})
         .then(mapa => {
           Object.keys(mapa || {}).forEach(dominio => {
