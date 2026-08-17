@@ -109,11 +109,8 @@
 
 <script>
   const params = new URLSearchParams(window.location.search);
-  const agenciaFiltro = params.get('agencia');
-  if(agenciaFiltro){
-    document.querySelector('h1').textContent = 'Leads asignados a ' + agenciaFiltro;
-    document.querySelector('.sub').textContent = 'Vista de solo lectura, exclusiva para ' + agenciaFiltro + '.';
-  }
+  const tokenAgencia = params.get('agencia');
+  let agenciaFiltro = null; // se resuelve tras cargar leads.json (traduce el token a nombre real)
 
   let infoAbierta = {};
   let guionAbierto = {};
@@ -403,6 +400,14 @@
       const leads = Array.isArray(data) ? data : (data.leads || []);
       const actualizado = Array.isArray(data) ? null : data.actualizado;
       document.getElementById('updated').textContent = 'Actualizado: ' + (actualizado || new Date().toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' }));
+
+      const tokens = (!Array.isArray(data) && data.agencia_tokens) || {};
+      if(tokenAgencia){
+        agenciaFiltro = tokens[tokenAgencia] || tokenAgencia; // si el token no esta en el mapa, se usa tal cual (compatibilidad con links viejos)
+        document.querySelector('h1').textContent = 'Leads asignados a ' + agenciaFiltro;
+        document.querySelector('.sub').textContent = 'Vista de solo lectura, exclusiva para ' + agenciaFiltro + '.';
+      }
+
       window.__leads = leads;
       render(leads);
 
