@@ -15,12 +15,42 @@
   .mono { font-family: 'JetBrains Mono', monospace; }
   a { color: #7db4ff; }
   .wrap { max-width: 1100px; margin: 0 auto; }
-  .header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .wordmark { font-size: 17px; font-weight: 800; }
+  .header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .wordmark-svg { width: 100px; height: 25px; color: #ffffff; display: block; flex-shrink: 0; }
   .tag { font-size: 11px; color: #9ca3af; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 8px; }
-  h1 { font-size: clamp(22px, 3.5vw, 30px); font-weight: 800; margin: 18px 0 6px; }
-  .sub { color: #9ca3af; font-size: 13px; margin-bottom: 26px; }
-  .updated { font-size: 11px; color: #6b7280; margin-bottom: 26px; }
+
+  .agency-logo-wrap {
+    display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 6px 14px;
+  }
+  .agency-logo-wrap img { height: 22px; max-width: 140px; object-fit: contain; display: block; }
+  .agency-logo-wrap span { font-size: 11px; color: #9ca3af; font-weight: 600; }
+
+  .title-block { text-align: center; margin-bottom: 30px; }
+  .hero-pill {
+    display: table; margin: 0 auto 16px; align-items: center; gap: 8px;
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em;
+    color: #7db4ff; background: rgba(0,80,195,0.15); border: 1px solid rgba(0,80,195,0.35);
+    padding: 6px 14px; border-radius: 100px;
+  }
+  .hero-pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: #59d98a; display: inline-block; margin-right: 6px;
+    box-shadow: 0 0 0 0 rgba(89,217,138,0.6); animation: rl-pulse 2s infinite; vertical-align: middle;
+  }
+  @keyframes rl-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(89,217,138,0.5); }
+    70% { box-shadow: 0 0 0 9px rgba(89,217,138,0); }
+    100% { box-shadow: 0 0 0 0 rgba(89,217,138,0); }
+  }
+  h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 800; margin: 0 auto 8px; letter-spacing: -0.01em; max-width: 720px; }
+  h1 em {
+    font-family: Georgia, serif; font-style: italic; font-weight: 400;
+    background: linear-gradient(120deg, #7db4ff, #59d98a);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .sub { color: #9ca3af; font-size: 13px; margin: 0 auto; max-width: 480px; }
+  .updated { font-size: 11px; color: #6b7280; margin: 10px auto 26px; text-align: center; }
 
   /* ---- Card de lead: mismo diseño que la app interna (rl-row) ---- */
   .rl-table-wrap { display: flex; flex-direction: column; gap: 12px; }
@@ -115,21 +145,50 @@
   .rl-track-brand { color: #ffffff; font-weight: 700; display: block; }
   .rl-track-domain { color: #6b7280; font-size: 11px; }
   .rl-track-empty { padding: 30px 24px; text-align: center; color: #6b7280; font-size: 13px; }
+
+  /* ---- Resumen de fases (vista de agencia) ---- */
+  .rl-resumen { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; }
+  .rl-chip {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    padding: 10px 18px; font-size: 12px; font-weight: 600; backdrop-filter: blur(8px);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .rl-chip:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25); }
+  .rl-chip b { font-size: 17px; display: block; font-weight: 800; margin-bottom: 2px; }
+  .rl-chip.activo { border-width: 2px; }
+
+  .rl-fase-title {
+    font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    margin: 26px 0 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .rl-fase-group:first-of-type .rl-fase-title { margin-top: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="header">
-    <span class="wordmark">Tiendanube</span>
-    <span class="tag">Partners MX</span>
+    <div class="header-brand">
+      <svg class="wordmark-svg" viewBox="0 0 160 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TiendaNube">
+        <path d="M51.4723 19.5098V7.49283H54.3653V19.5098H51.4723ZM67.3608 10.8394C67.0958 10.1395 66.7119 9.51774 66.2124 8.97244C65.7113 8.42714 65.1048 8.00076 64.3897 7.69158C63.6745 7.38241 62.8472 7.22782 61.9044 7.22782C60.7849 7.22782 59.7725 7.49962 58.867 8.04492C57.9616 8.59022 57.2464 9.32918 56.7249 10.2652C56.2017 11.2012 55.9401 12.2714 55.9401 13.4792C55.9401 14.6871 56.1983 15.7029 56.713 16.6593C57.2277 17.6174 57.9497 18.375 58.8772 18.9339C59.8047 19.4945 60.8868 19.7731 62.1235 19.7731C62.9474 19.7731 63.7034 19.6474 64.388 19.3977C65.0726 19.148 65.6654 18.8014 66.1666 18.3598C66.6677 17.9181 67.0346 17.4102 67.2708 16.836L64.9299 15.6876C64.6649 16.1599 64.2996 16.5353 63.8359 16.8139C63.3721 17.0942 62.8081 17.2335 62.1456 17.2335C61.4831 17.2335 60.897 17.0789 60.3891 16.7697C59.8812 16.4606 59.4973 16.0223 59.2407 15.4549C59.0828 15.1083 58.9842 14.7278 58.9452 14.3167H67.6003C67.6598 14.1553 67.6988 13.9634 67.7209 13.7425C67.743 13.5217 67.7549 13.3077 67.7549 13.1021C67.7549 12.2918 67.6224 11.5376 67.3574 10.8377L67.3608 10.8394ZM60.2923 10.0664C60.7628 9.76406 61.3013 9.61287 61.9044 9.61287C62.5075 9.61287 63.0782 9.76746 63.5284 10.0766C63.9769 10.3858 64.3013 10.8054 64.5001 11.3354C64.5901 11.5766 64.6445 11.8348 64.6666 12.1083H59.008C59.0573 11.8518 59.1269 11.6123 59.2204 11.3898C59.4633 10.8088 59.82 10.3671 60.2923 10.0647V10.0664ZM79.3744 9.40393C78.9922 8.71933 78.4571 8.18592 77.7725 7.802C77.0879 7.41978 76.303 7.22782 75.4197 7.22782C74.5363 7.22782 73.8178 7.41639 73.1773 7.79181C72.683 8.0823 72.2974 8.47641 72.0171 8.97244V7.49453H69.3008V19.5115H72.1937V12.4651C72.1937 11.9351 72.2974 11.4781 72.5029 11.0959C72.7085 10.7137 72.9956 10.4147 73.3642 10.2006C73.7328 9.9866 74.1524 9.87958 74.623 9.87958C75.0935 9.87958 75.5318 9.9866 75.8936 10.2006C76.2538 10.4147 76.5375 10.712 76.7447 11.0959C76.9503 11.4798 77.0539 11.9351 77.0539 12.4651V19.5115H79.9469V11.7805C79.9469 10.8818 79.7549 10.0902 79.3727 9.40563L79.3744 9.40393ZM91.1824 2.98434V8.70914C90.8359 8.33031 90.4214 8.01605 89.9338 7.76973C89.2187 7.40959 88.4067 7.22782 87.4927 7.22782C86.358 7.22782 85.3319 7.50812 84.4112 8.06701C83.4905 8.6276 82.7651 9.37845 82.2351 10.3196C81.7051 11.2624 81.4401 12.3224 81.4401 13.4996C81.4401 14.6769 81.7051 15.7233 82.2351 16.6797C82.7651 17.6378 83.4871 18.392 84.3993 18.9441C85.3115 19.4962 86.3512 19.7731 87.5131 19.7731C88.3812 19.7731 89.1847 19.5999 89.9202 19.2533C90.4876 18.9866 90.9582 18.6282 91.3336 18.1814V19.5064H94.072V2.98434H91.179H91.1824ZM90.7526 15.3784C90.4655 15.9237 90.0714 16.3501 89.5703 16.6593C89.0692 16.9685 88.4882 17.1231 87.8257 17.1231C87.1632 17.1231 86.5958 16.9685 86.0811 16.6593C85.5646 16.3501 85.1637 15.9237 84.8766 15.3784C84.5896 14.8331 84.4452 14.208 84.4452 13.5013C84.4452 12.7946 84.5896 12.1729 84.8766 11.6344C85.1637 11.0976 85.5646 10.6695 86.0811 10.3535C86.5958 10.0376 87.1785 9.87788 87.8257 9.87788C88.4729 9.87788 89.0692 10.0325 89.5703 10.3416C90.0714 10.6508 90.4655 11.0823 90.7526 11.6344C91.0397 12.1865 91.1841 12.8082 91.1841 13.5013C91.1841 14.1944 91.0397 14.8348 90.7526 15.3784ZM105.737 9.27142C105.318 8.63099 104.732 8.12986 103.981 7.76973C103.23 7.40959 102.36 7.22782 101.375 7.22782C100.565 7.22782 99.8138 7.36033 99.1224 7.62533C98.4293 7.89034 97.8296 8.25557 97.3217 8.71933C96.8138 9.18309 96.4418 9.73179 96.2056 10.3654L98.5686 11.5138C98.7894 10.9685 99.1394 10.5302 99.6184 10.1989C100.097 9.86769 100.646 9.70121 101.265 9.70121C101.927 9.70121 102.46 9.87448 102.866 10.221C103.271 10.5676 103.475 10.9974 103.475 11.5138V11.9028L99.897 12.4855C98.9542 12.6333 98.1745 12.883 97.5562 13.2363C96.9378 13.5897 96.4808 14.0279 96.1869 14.5512C95.8914 15.0744 95.7453 15.6672 95.7453 16.3297C95.7453 16.9923 95.9151 17.6293 96.2532 18.1525C96.5913 18.6757 97.0703 19.0766 97.6886 19.3569C98.307 19.6372 99.0358 19.7765 99.8749 19.7765C100.537 19.7765 101.141 19.6848 101.686 19.4996C102.231 19.3162 102.717 19.0512 103.143 18.7046C103.317 18.5653 103.476 18.4073 103.629 18.2408V19.5115H106.368V11.5155C106.368 10.661 106.157 9.91355 105.737 9.27312V9.27142ZM103.086 16.1072C102.827 16.5642 102.467 16.9209 102.003 17.1791C101.54 17.4373 101.006 17.5664 100.402 17.5664C99.9293 17.5664 99.5369 17.4458 99.2192 17.2012C98.9016 16.9583 98.7436 16.6304 98.7436 16.2176C98.7436 15.8048 98.8829 15.4447 99.1632 15.1797C99.4435 14.9147 99.8699 14.7312 100.444 14.6276L103.47 14.1129V14.6055C103.47 15.1508 103.34 15.6519 103.082 16.1072H103.086ZM118.716 9.40393C118.334 8.71933 117.798 8.18592 117.114 7.802C116.429 7.41978 115.644 7.22782 114.761 7.22782C113.878 7.22782 113.159 7.41639 112.519 7.79181C112.024 8.0823 111.639 8.47641 111.359 8.97244V7.49453H108.642V19.5115H111.535V12.4651C111.535 11.9351 111.639 11.4781 111.844 11.0959C112.05 10.7137 112.337 10.4147 112.706 10.2006C113.074 9.9866 113.494 9.87958 113.964 9.87958C114.435 9.87958 114.873 9.9866 115.235 10.2006C115.595 10.4147 115.879 10.712 116.086 11.0959C116.292 11.4798 116.395 11.9351 116.395 12.4651V19.5115H119.288V11.7805C119.288 10.8818 119.096 10.0902 118.714 9.40563L118.716 9.40393ZM126.661 19.7748C125.614 19.7748 124.69 19.5642 123.889 19.1446C123.085 18.725 122.463 18.1389 122.022 17.3881C121.58 16.6372 121.359 15.7675 121.359 14.7822V7.49283H124.252V14.6938C124.252 15.1797 124.356 15.6078 124.561 15.9747C124.767 16.3433 125.054 16.627 125.423 16.8258C125.791 17.0245 126.211 17.1248 126.681 17.1248C127.152 17.1248 127.59 17.0262 127.952 16.8258C128.312 16.627 128.596 16.3433 128.803 15.9747C129.009 15.6061 129.112 15.1797 129.112 14.6938V7.49283H132.005V14.7822C132.005 15.7692 131.781 16.6372 131.331 17.3881C130.881 18.1389 130.259 18.725 129.464 19.1446C128.669 19.5642 127.733 19.7748 126.659 19.7748H126.661ZM146.11 10.3196C145.571 9.37675 144.848 8.6259 143.934 8.06701C143.02 7.50812 141.997 7.22782 140.864 7.22782C139.937 7.22782 139.12 7.40789 138.413 7.76973C137.932 8.01605 137.521 8.32862 137.176 8.70744V2.98434H134.283V19.5098H137V18.1474C137.387 18.6112 137.869 18.9815 138.447 19.255C139.176 19.6015 139.974 19.7748 140.844 19.7748C142.007 19.7748 143.045 19.4979 143.958 18.9458C144.87 18.3937 145.592 17.6395 146.122 16.6814C146.652 15.725 146.917 14.6633 146.917 13.5013C146.917 12.3394 146.648 11.2624 146.11 10.3213V10.3196ZM143.482 15.3784C143.195 15.9237 142.794 16.3501 142.278 16.6593C141.761 16.9685 141.173 17.1231 140.511 17.1231C139.848 17.1231 139.306 16.9685 138.799 16.6593C138.291 16.3501 137.893 15.9237 137.606 15.3784C137.319 14.8331 137.174 14.208 137.174 13.5013C137.174 12.7946 137.319 12.1865 137.606 11.6344C137.893 11.0823 138.291 10.6508 138.799 10.3416C139.306 10.0325 139.877 9.87788 140.511 9.87788C141.144 9.87788 141.763 10.0359 142.278 10.3535C142.792 10.6712 143.195 11.0976 143.482 11.6344C143.769 12.1729 143.913 12.7946 143.913 13.5013C143.913 14.208 143.769 14.8348 143.482 15.3784ZM159.291 10.8394C159.026 10.1395 158.642 9.51774 158.142 8.97244C157.641 8.42714 157.035 8.00076 156.319 7.69158C155.604 7.38241 154.777 7.22782 153.834 7.22782C152.715 7.22782 151.702 7.49962 150.797 8.04492C149.891 8.59022 149.176 9.32918 148.655 10.2652C148.131 11.2012 147.87 12.2714 147.87 13.4792C147.87 14.6871 148.128 15.7029 148.643 16.6593C149.158 17.6174 149.879 18.375 150.807 18.9339C151.735 19.4945 152.817 19.7731 154.053 19.7731C154.877 19.7731 155.633 19.6474 156.318 19.3977C157.002 19.148 157.595 18.8014 158.096 18.3598C158.597 17.9181 158.964 17.4102 159.201 16.836L156.86 15.6876C156.595 16.1599 156.229 16.5353 155.766 16.8139C155.302 17.0942 154.738 17.2335 154.075 17.2335C153.413 17.2335 152.827 17.0789 152.319 16.7697C151.811 16.4606 151.427 16.0223 151.171 15.4549C151.013 15.1083 150.914 14.7278 150.875 14.3167H159.53C159.59 14.1553 159.629 13.9634 159.651 13.7425C159.673 13.5217 159.685 13.3077 159.685 13.1021C159.685 12.2918 159.552 11.5376 159.287 10.8377L159.291 10.8394ZM152.392 10.0664C152.862 9.76406 153.401 9.61287 154.004 9.61287C154.607 9.61287 155.178 9.76746 155.628 10.0766C156.077 10.3858 156.401 10.8054 156.6 11.3354C156.69 11.5766 156.746 11.8348 156.766 12.1083H151.108C151.157 11.8518 151.227 11.6123 151.32 11.3898C151.563 10.8088 151.92 10.3671 152.392 10.0647V10.0664ZM48.0035 7.50302V4.11061H45.1241V7.50302H43.1094V10.0766H45.1241V19.5081H48.0035V10.0766H50.0182V7.50302H48.0035ZM52.9316 2.41016C51.9922 2.41016 51.2311 3.1712 51.2311 4.11061C51.2311 5.05002 51.9922 5.81106 52.9316 5.81106C53.871 5.81106 54.632 5.05002 54.632 4.11061C54.632 3.1712 53.871 2.41016 52.9316 2.41016Z"></path><path d="M24.0068 0H23.9915C23.9915 0 23.983 0 23.9779 0C20.4547 0.00509626 17.098 1.38958 14.5923 3.82559C13.3097 3.28199 11.9287 3 10.5017 3C4.71065 3 0 7.71065 0 13.5C0 19.2894 4.71065 24 10.5 24C11.9049 24 13.2945 23.7129 14.5804 23.1727C17.013 25.5391 20.3307 27 23.9847 27C31.4287 27 37.4847 20.9439 37.4847 13.5C37.4847 6.05606 31.4405 0.0118913 24.0068 0ZM23.9847 24C18.1954 24 13.4847 19.2894 13.4847 13.5H10.4847C10.4847 16.1484 11.2542 18.6183 12.5759 20.7044C11.9032 20.8981 11.205 21 10.5 21C6.36523 21 3 17.6348 3 13.5C3 9.36523 6.36523 6 10.5 6C12.1376 6 13.6937 6.51812 14.9983 7.4983C16.906 8.93035 18 11.1183 18 13.5H21C21 10.359 19.6393 7.45923 17.2491 5.4581C19.1263 3.88335 21.5062 3.0017 23.9915 3C29.7775 3.0034 34.483 7.71234 34.483 13.5C34.483 19.2877 29.7724 24 23.983 24H23.9847Z"></path>
+      </svg>
+      <span class="tag">Partners MX</span>
+    </div>
+    <div class="agency-logo-wrap" id="agencyLogoWrap" style="display:none;">
+      <span>Agencia</span>
+      <img id="agencyLogoImg" alt="">
+    </div>
   </div>
-  <h1>Radar de Leads Pautando — Reporte</h1>
-  <div class="sub">Vista de solo lectura. Para buscar candidatos nuevos, asignar o generar guiones, usa la app interactiva en Claude.</div>
+
+  <div class="title-block">
+    <div class="hero-pill"><span class="hero-pulse"></span>Radar de Leads · Reporte en vivo</div>
+    <h1 id="titulo">Radar de Leads Pautando — Reporte</h1>
+    <div class="sub" id="subtitulo">Vista de solo lectura. Para buscar candidatos nuevos, asignar o generar guiones, usa la app interactiva en Claude.</div>
+  </div>
   <div class="updated" id="updated"></div>
 
-  <div class="rl-table-wrap" id="lista"></div>
-
   <div id="seguimiento"></div>
+
+  <div class="rl-table-wrap" id="lista"></div>
 
   <footer>Generado desde el Radar de Leads Pautando · Tiendanube Partners MX</footer>
 </div>
@@ -261,6 +320,9 @@
   };
 
   const PIPELINE_OPCIONES = ['Lead', 'Reunión', 'Negociando', 'Ganado', 'Perdido'];
+
+  // Logo de cada agencia (archivos en sitio-vercel/logos/), pendiente de agregar
+  const AGENCIA_LOGOS = {};
   const basePath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
 
   window.rlCambiarPipeline = function(select){
@@ -404,64 +466,105 @@
       </div>`;
   }
 
-  function render(leads){
-    const cont = document.getElementById('lista');
-    const leadsAMostrar = agenciaFiltro ? leads.filter(c => c.agencia_asignada === agenciaFiltro) : leads;
-    renderTablaSeguimiento(leads);
-    if(leadsAMostrar.length === 0){
-      cont.innerHTML = '<div class="empty">' + (agenciaFiltro ? 'Todavia no tienes leads asignados.' : 'No hay leads en este reporte.') + '</div>';
-      return;
-    }
-    cont.innerHTML = leadsAMostrar.map(c => {
-      const verInfo = !!infoAbierta[c.dominio];
-      const verGuion = !!guionAbierto[c.dominio];
-      let detalleHtml = '';
-      if(verInfo){
-        const filas = [];
-        if(c.visitas_mensuales_estimadas) filas.push(`<div><span style="color:#6b7280;">Visitas/mes:</span> <b>${c.visitas_mensuales_estimadas}</b></div>`);
-        if(c.porcentaje_trafico_pagado) filas.push(`<div><span style="color:#6b7280;">Tráfico pagado:</span> <b>${c.porcentaje_trafico_pagado}</b></div>`);
-        if(c.ads_activos) filas.push(`<div><span style="color:#6b7280;">Ads (detalle):</span> ${linkify(c.ads_activos)}</div>`);
-        if(c.contacto_nombre || c.contacto_telefono || c.contacto_correo || c.contacto_linkedin){
-          const partes = [];
-          if(c.contacto_nombre) partes.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
-          if(c.contacto_telefono) partes.push('📞 '+c.contacto_telefono);
-          if(c.contacto_correo) partes.push('✉️ '+c.contacto_correo);
-          if(c.contacto_linkedin) partes.push(linkify(c.contacto_linkedin));
-          filas.push(`<div><span style="color:#6b7280;">Contacto:</span> ${partes.join(' · ')}</div>`);
-        }
-        if(c.nota_calificacion) filas.push(`<div><span style="color:#6b7280;">Nota:</span> ${c.nota_calificacion}</div>`);
-        detalleHtml = `<div class="rl-detail">${filas.join('') || 'Sin información adicional.'}</div>`;
+  function cardHtml(c){
+    const verInfo = !!infoAbierta[c.dominio];
+    const verGuion = !!guionAbierto[c.dominio];
+    let detalleHtml = '';
+    if(verInfo){
+      const filas = [];
+      if(c.visitas_mensuales_estimadas) filas.push(`<div><span style="color:#6b7280;">Visitas/mes:</span> <b>${c.visitas_mensuales_estimadas}</b></div>`);
+      if(c.porcentaje_trafico_pagado) filas.push(`<div><span style="color:#6b7280;">Tráfico pagado:</span> <b>${c.porcentaje_trafico_pagado}</b></div>`);
+      if(c.ads_activos) filas.push(`<div><span style="color:#6b7280;">Ads (detalle):</span> ${linkify(c.ads_activos)}</div>`);
+      if(c.contacto_nombre || c.contacto_telefono || c.contacto_correo || c.contacto_linkedin){
+        const partes = [];
+        if(c.contacto_nombre) partes.push(c.contacto_nombre + (c.contacto_cargo ? ' ('+c.contacto_cargo+')' : ''));
+        if(c.contacto_telefono) partes.push('📞 '+c.contacto_telefono);
+        if(c.contacto_correo) partes.push('✉️ '+c.contacto_correo);
+        if(c.contacto_linkedin) partes.push(linkify(c.contacto_linkedin));
+        filas.push(`<div><span style="color:#6b7280;">Contacto:</span> ${partes.join(' · ')}</div>`);
       }
-      const guionHtml = (verGuion && c.guion) ? `<div class="rl-detail">${formatearGuion(c.guion)}</div>` : '';
-      return `<div class="rl-row">
-        <div class="rl-row-top">
-          <div class="rl-brand">
-            <div class="rl-avatar">${iniciales(c.dominio)}</div>
-            <div>
-              <div class="rl-brand-name">${c.marca}</div>
-              <div class="rl-domain"><a href="https://${c.dominio}" target="_blank" rel="noopener">${c.dominio}</a></div>
-            </div>
-          </div>
-          <div class="rl-meta">
-            ${c.facturacion_estimada_mxn ? `<div class="rl-meta-item">Facturación est. <b>$${Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')} MXN/mes</b></div>` : ''}
-            ${c.ads_activos ? `<div class="rl-meta-item" style="display:flex; align-items:center; gap:6px;">Ads: ${renderAdsIconos(c.ads_activos)}</div>` : ''}
-            <div class="rl-meta-item">${badgePlataforma(c.plataforma)}</div>
-            <div class="rl-meta-item">${badgeEstado(c.estado)}</div>
-            <div class="rl-meta-item">${badgePipeline(c.pipeline_status)}</div>
-            ${c.estado==='Asignado' && c.agencia_asignada ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
-          </div>
-          <div class="rl-actions">
-            <select class="rl-pipeline-select" data-dominio="${c.dominio}" onchange="rlCambiarPipeline(this)">
-              ${PIPELINE_OPCIONES.map(op => `<option value="${op}" ${ (c.pipeline_status||'Lead')===op ? 'selected' : ''}>${op}</option>`).join('')}
-            </select>
-            <button class="rl-btn" onclick="rlToggleInfo('${c.dominio}')">${verInfo?'Ocultar':'Más'} info</button>
-            ${c.guion ? `<button class="rl-btn" onclick="rlToggleGuion('${c.dominio}')">${verGuion?'Ocultar':'Ver'} guion</button>` : ''}
+      if(c.nota_calificacion) filas.push(`<div><span style="color:#6b7280;">Nota:</span> ${c.nota_calificacion}</div>`);
+      detalleHtml = `<div class="rl-detail">${filas.join('') || 'Sin información adicional.'}</div>`;
+    }
+    const guionHtml = (verGuion && c.guion) ? `<div class="rl-detail">${formatearGuion(c.guion)}</div>` : '';
+    return `<div class="rl-row">
+      <div class="rl-row-top">
+        <div class="rl-brand">
+          <div class="rl-avatar">${iniciales(c.dominio)}</div>
+          <div>
+            <div class="rl-brand-name">${c.marca}</div>
+            <div class="rl-domain"><a href="https://${c.dominio}" target="_blank" rel="noopener">${c.dominio}</a></div>
           </div>
         </div>
-        ${detalleHtml}
-        ${guionHtml}
+        <div class="rl-meta">
+          ${c.facturacion_estimada_mxn ? `<div class="rl-meta-item">Facturación est. <b>$${Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')} MXN/mes</b></div>` : ''}
+          ${c.ads_activos ? `<div class="rl-meta-item" style="display:flex; align-items:center; gap:6px;">Ads: ${renderAdsIconos(c.ads_activos)}</div>` : ''}
+          <div class="rl-meta-item">${badgePlataforma(c.plataforma)}</div>
+          <div class="rl-meta-item">${badgeEstado(c.estado)}</div>
+          <div class="rl-meta-item">${badgePipeline(c.pipeline_status)}</div>
+          ${c.estado==='Asignado' && c.agencia_asignada ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
+        </div>
+        <div class="rl-actions">
+          <select class="rl-pipeline-select" data-dominio="${c.dominio}" onchange="rlCambiarPipeline(this)">
+            ${PIPELINE_OPCIONES.map(op => `<option value="${op}" ${ (c.pipeline_status||'Lead')===op ? 'selected' : ''}>${op}</option>`).join('')}
+          </select>
+          <button class="rl-btn" onclick="rlToggleInfo('${c.dominio}')">${verInfo?'Ocultar':'Más'} info</button>
+          ${c.guion ? `<button class="rl-btn" onclick="rlToggleGuion('${c.dominio}')">${verGuion?'Ocultar':'Ver'} guion</button>` : ''}
+        </div>
+      </div>
+      ${detalleHtml}
+      ${guionHtml}
+    </div>`;
+  }
+
+  let filtroFaseAgencia = 'todas';
+  window.rlFiltrarFaseAgencia = function(fase){
+    filtroFaseAgencia = filtroFaseAgencia === fase ? 'todas' : fase;
+    render(window.__leads || []);
+  };
+
+  // Resumen tipo chips (como el de la app interna) con el conteo de leads de esta
+  // agencia en cada fase del pipeline. Clic en un chip filtra/agrupa por esa fase.
+  function resumenAgenciaHtml(leadsAgencia){
+    return `<div class="rl-resumen">${PIPELINE_OPCIONES.map(fase => {
+      const cantidad = leadsAgencia.filter(c => (c.pipeline_status || 'Lead') === fase).length;
+      const c = PIPELINE_COLORES[fase];
+      const activo = filtroFaseAgencia === fase;
+      return `<div class="rl-chip ${activo?'activo':''}" style="background:${c.bg}; ${activo?'border-color:'+c.color+';':''}" onclick="rlFiltrarFaseAgencia('${fase}')">
+        <b style="color:${c.color};">${cantidad}</b>${fase}
       </div>`;
-    }).join('');
+    }).join('')}</div>`;
+  }
+
+  function render(leads){
+    const cont = document.getElementById('lista');
+    renderTablaSeguimiento(leads);
+
+    if(agenciaFiltro){
+      const leadsAgencia = leads.filter(c => c.agencia_asignada === agenciaFiltro);
+      if(leadsAgencia.length === 0){
+        cont.innerHTML = '<div class="empty">Todavia no tienes leads asignados.</div>';
+        return;
+      }
+      const gruposHtml = PIPELINE_OPCIONES
+        .filter(fase => filtroFaseAgencia === 'todas' || filtroFaseAgencia === fase)
+        .map(fase => {
+          const items = leadsAgencia.filter(c => (c.pipeline_status || 'Lead') === fase);
+          if(items.length === 0) return '';
+          return `<div class="rl-fase-group">
+            <div class="rl-fase-title" style="color:${PIPELINE_COLORES[fase].color};">${fase} (${items.length})</div>
+            ${items.map(cardHtml).join('')}
+          </div>`;
+        }).filter(Boolean).join('');
+      cont.innerHTML = resumenAgenciaHtml(leadsAgencia) + (gruposHtml || '<div class="empty">No hay leads en esta fase.</div>');
+      return;
+    }
+
+    if(leads.length === 0){
+      cont.innerHTML = '<div class="empty">No hay leads en este reporte.</div>';
+      return;
+    }
+    cont.innerHTML = leads.map(cardHtml).join('');
   }
 
   fetch(basePath + 'leads.json?_=' + Date.now())
@@ -477,8 +580,15 @@
       const tokens = (!Array.isArray(data) && data.agencia_tokens) || {};
       if(tokenAgencia){
         agenciaFiltro = tokens[tokenAgencia] || tokenAgencia; // si el token no esta en el mapa, se usa tal cual (compatibilidad con links viejos)
-        document.querySelector('h1').textContent = 'Leads asignados a ' + agenciaFiltro;
-        document.querySelector('.sub').textContent = 'Vista de solo lectura, exclusiva para ' + agenciaFiltro + '.';
+        document.getElementById('titulo').innerHTML = 'Leads asignados a <em>' + agenciaFiltro + '</em>';
+        document.getElementById('subtitulo').textContent = 'Vista de solo lectura, exclusiva para ' + agenciaFiltro + '.';
+
+        const logoUrl = AGENCIA_LOGOS[agenciaFiltro];
+        if(logoUrl){
+          document.getElementById('agencyLogoImg').src = logoUrl;
+          document.getElementById('agencyLogoImg').alt = agenciaFiltro;
+          document.getElementById('agencyLogoWrap').style.display = 'flex';
+        }
       }
 
       window.__leads = leads;
