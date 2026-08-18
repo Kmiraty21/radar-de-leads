@@ -62,6 +62,7 @@
     transition: all 0.2s;
   }
   .rl-row:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); }
+  .rl-row.overdue { background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.3); border-left: 3px solid #ff6b6b; }
 
   .rl-row-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
   .rl-brand { display: flex; align-items: center; gap: 10px; min-width: 180px; }
@@ -116,6 +117,20 @@
     font-size: 13px; line-height: 1.6; color: #cbd2dc; display: flex; flex-direction: column; gap: 8px;
   }
   .rl-detail a { word-break: break-all; }
+
+  .rl-motivo {
+    margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(255,107,107,0.25);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .rl-motivo label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #ff9494; }
+  .rl-motivo-textarea {
+    width: 100%; min-height: 60px; resize: vertical; background: rgba(0,0,0,0.3); color: #ffffff;
+    border: 1px solid rgba(255,107,107,0.25); border-radius: 10px; padding: 10px 12px; font-size: 13px;
+    font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.5;
+  }
+  .rl-motivo-textarea:focus { outline: none; border-color: rgba(255,107,107,0.5); }
+  .rl-motivo .rl-btn { align-self: flex-start; }
+  .rl-btn.small { padding: 5px 12px; font-size: 11px; }
 
   .empty { text-align: center; padding: 60px 20px; color: #6b7280; }
   .error { text-align: center; padding: 60px 20px; color: #ff8a8a; }
@@ -222,12 +237,30 @@
   }
 
   const PIPELINE_COLORES = {
+    'Sin seguimiento': { bg: 'rgba(255,107,107,0.18)', color: '#ff6b6b' },
     'Lead': { bg: 'rgba(255,255,255,0.08)', color: '#b8c0cc' },
     'Reunión': { bg: 'rgba(0,80,195,0.18)', color: '#7db4ff' },
     'Negociando': { bg: 'rgba(255,209,102,0.14)', color: '#ffd166' },
     'Ganado': { bg: 'rgba(89,217,138,0.14)', color: '#6be3a0' },
     'Perdido': { bg: 'rgba(255,107,107,0.14)', color: '#ff9494' }
   };
+
+  const DIAS_SIN_SEGUIMIENTO = 3;
+
+  function diasDesde(fechaStr){
+    if(!fechaStr) return null;
+    const ms = new Date() - new Date(fechaStr);
+    return Math.floor(ms / (1000*60*60*24));
+  }
+
+  // Sin seguimiento = todavia en "Lead" (nunca le movieron el status) y ya pasaron
+  // DIAS_SIN_SEGUIMIENTO dias desde que se asigno.
+  function esSinSeguimiento(c){
+    const status = c.pipeline_status || 'Lead';
+    if(status !== 'Lead') return false;
+    const dias = diasDesde(c.fecha_asignacion);
+    return dias !== null && dias >= DIAS_SIN_SEGUIMIENTO;
+  }
 
   function badgePipeline(status){
     const s = status || 'Lead';
@@ -320,6 +353,13 @@
   };
 
   const PIPELINE_OPCIONES = ['Lead', 'Reunión', 'Negociando', 'Ganado', 'Perdido'];
+  const FASES_AGRUPACION = ['Sin seguimiento', 'Lead', 'Reunión', 'Negociando', 'Ganado', 'Perdido'];
+
+  // Fase "visual" de un lead: igual al pipeline_status, salvo que se reclasifica
+  // como "Sin seguimiento" cuando lleva DIAS_SIN_SEGUIMIENTO dias sin moverse de Lead.
+  function faseDeLead(c){
+    return esSinSeguimiento(c) ? 'Sin seguimiento' : (c.pipeline_status || 'Lead');
+  }
 
   // Logo de cada agencia (archivos en sitio-vercel/logos/)
   const AGENCIA_LOGOS = {
@@ -355,6 +395,28 @@
         const sel = buscarSelect();
         if(sel){ sel.style.borderColor = '#ff6b6b'; sel.title = 'No se pudo guardar: ' + err.message; }
         console.error('Error guardando pipeline_status:', err);
+      });
+  };
+
+  window.rlGuardarMotivo = function(btn, dominio){
+    const textarea = document.querySelector(`.rl-motivo-textarea[data-dominio="${dominio}"]`);
+    const motivo = textarea.value;
+    const lead = (window.__leads || []).find(l => l.dominio === dominio);
+    if(lead) lead.motivo_perdido = motivo;
+
+    const original = btn.textContent;
+    btn.textContent = 'Guardando...';
+    fetch('/api/pipeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dominio, estado: 'Perdido', motivo })
+    })
+      .then(r => r.json().then(data => { if(!r.ok) throw new Error(data.error || 'Error al guardar'); }))
+      .then(() => { btn.textContent = 'Guardado ✓'; setTimeout(() => { btn.textContent = original; }, 1500); })
+      .catch(err => {
+        btn.textContent = 'Error al guardar';
+        console.error('Error guardando motivo:', err);
+        setTimeout(() => { btn.textContent = original; }, 2000);
       });
   };
 
@@ -452,13 +514,18 @@
       ${agenciasConLeads.map(a => `<option value="${a}" ${filtroAgenciaTabla===a?'selected':''}>${a} (${todosAsignados.filter(c=>c.agencia_asignada===a).length})</option>`).join('')}
     </select>`;
 
-    const filasHtml = filtrados.map(c => `<tr>
-      <td><span class="rl-track-brand">${c.marca}</span><span class="rl-track-domain">${c.dominio}</span></td>
-      <td>${c.facturacion_estimada_mxn ? '$'+Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')+' MXN' : '-'}</td>
-      <td>${c.agencia_asignada || '-'}</td>
-      <td>${badgePipeline(c.pipeline_status)}</td>
-      <td>${c.fecha_asignacion || '-'}</td>
-    </tr>`).join('');
+    const filasHtml = filtrados.map(c => {
+      const dias = diasDesde(c.fecha_asignacion);
+      const sinSeguimiento = esSinSeguimiento(c);
+      return `<tr>
+        <td><span class="rl-track-brand">${c.marca}</span><span class="rl-track-domain">${c.dominio}</span></td>
+        <td>${c.facturacion_estimada_mxn ? '$'+Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')+' MXN' : '-'}</td>
+        <td>${c.agencia_asignada || '-'}</td>
+        <td>${badgePipeline(c.pipeline_status)}</td>
+        <td>${c.fecha_asignacion || '-'}</td>
+        <td style="${sinSeguimiento ? 'color:#ff6b6b; font-weight:800;' : ''}">${dias !== null ? dias+'d' : '-'}${sinSeguimiento ? ' ⚠' : ''}</td>
+      </tr>`;
+    }).join('');
 
     cont.innerHTML = `<div class="rl-track-title">
         <span>Seguimiento de asignaciones<span class="count">${filtrados.length} de ${todosAsignados.length} lead${todosAsignados.length!==1?'s':''}</span></span>
@@ -466,7 +533,7 @@
       </div>
       <div class="rl-track-wrap">
         <table class="rl-track-table">
-          <thead><tr><th>Marca</th><th>Facturación est.</th><th>Agencia</th><th>Pipeline</th><th>Fecha asig.</th></tr></thead>
+          <thead><tr><th>Marca</th><th>Facturación est.</th><th>Agencia</th><th>Pipeline</th><th>Fecha asig.</th><th>Días sin mover</th></tr></thead>
           <tbody>${filasHtml}</tbody>
         </table>
       </div>`;
@@ -493,7 +560,9 @@
       detalleHtml = `<div class="rl-detail">${filas.join('') || 'Sin información adicional.'}</div>`;
     }
     const guionHtml = (verGuion && c.guion) ? `<div class="rl-detail">${formatearGuion(c.guion)}</div>` : '';
-    return `<div class="rl-row">
+    const sinSeguimiento = esSinSeguimiento(c);
+    const dias = diasDesde(c.fecha_asignacion);
+    return `<div class="rl-row ${sinSeguimiento?'overdue':''}">
       <div class="rl-row-top">
         <div class="rl-brand">
           <div class="rl-avatar">${iniciales(c.dominio)}</div>
@@ -509,6 +578,7 @@
           <div class="rl-meta-item">${badgeEstado(c.estado)}</div>
           <div class="rl-meta-item">${badgePipeline(c.pipeline_status)}</div>
           ${c.estado==='Asignado' && c.agencia_asignada ? `<div class="rl-meta-item">Asignado a <b>${c.agencia_asignada}</b></div>` : ''}
+          ${sinSeguimiento ? `<div class="rl-meta-item" style="color:#ff6b6b; font-weight:700;">⚠ ${dias} días sin seguimiento</div>` : ''}
         </div>
         <div class="rl-actions">
           <select class="rl-pipeline-select" data-dominio="${c.dominio}" onchange="rlCambiarPipeline(this)">
@@ -518,6 +588,11 @@
           ${c.guion ? `<button class="rl-btn" onclick="rlToggleGuion('${c.dominio}')">${verGuion?'Ocultar':'Ver'} guion</button>` : ''}
         </div>
       </div>
+      ${(c.pipeline_status === 'Perdido') ? `<div class="rl-motivo">
+        <label>¿Por qué se perdió este lead?</label>
+        <textarea class="rl-motivo-textarea" data-dominio="${c.dominio}" placeholder="Ej. eligieron otra plataforma, presupuesto, no hubo respuesta...">${escapeAttr(c.motivo_perdido || '')}</textarea>
+        <button class="rl-btn small" onclick="rlGuardarMotivo(this, '${c.dominio}')">Guardar motivo</button>
+      </div>` : ''}
       ${detalleHtml}
       ${guionHtml}
     </div>`;
@@ -532,8 +607,8 @@
   // Resumen tipo chips (como el de la app interna) con el conteo de leads de esta
   // agencia en cada fase del pipeline. Clic en un chip filtra/agrupa por esa fase.
   function resumenAgenciaHtml(leadsAgencia){
-    return `<div class="rl-resumen">${PIPELINE_OPCIONES.map(fase => {
-      const cantidad = leadsAgencia.filter(c => (c.pipeline_status || 'Lead') === fase).length;
+    return `<div class="rl-resumen">${FASES_AGRUPACION.map(fase => {
+      const cantidad = leadsAgencia.filter(c => faseDeLead(c) === fase).length;
       const c = PIPELINE_COLORES[fase];
       const activo = filtroFaseAgencia === fase;
       return `<div class="rl-chip ${activo?'activo':''}" style="background:${c.bg}; ${activo?'border-color:'+c.color+';':''}" onclick="rlFiltrarFaseAgencia('${fase}')">
@@ -552,10 +627,10 @@
         cont.innerHTML = '<div class="empty">Todavia no tienes leads asignados.</div>';
         return;
       }
-      const gruposHtml = PIPELINE_OPCIONES
+      const gruposHtml = FASES_AGRUPACION
         .filter(fase => filtroFaseAgencia === 'todas' || filtroFaseAgencia === fase)
         .map(fase => {
-          const items = leadsAgencia.filter(c => (c.pipeline_status || 'Lead') === fase);
+          const items = leadsAgencia.filter(c => faseDeLead(c) === fase);
           if(items.length === 0) return '';
           return `<div class="rl-fase-group">
             <div class="rl-fase-title" style="color:${PIPELINE_COLORES[fase].color};">${fase} (${items.length})</div>
@@ -608,7 +683,11 @@
           .then(mapa => {
             Object.keys(mapa || {}).forEach(dominio => {
               const lead = leads.find(l => l.dominio === dominio);
-              if(lead) lead.pipeline_status = mapa[dominio];
+              if(!lead) return;
+              const entry = mapa[dominio];
+              // compatibilidad: entradas viejas guardaban solo el string del estado
+              if(typeof entry === 'string'){ lead.pipeline_status = entry; }
+              else { lead.pipeline_status = entry.estado; lead.motivo_perdido = entry.motivo || ''; }
             });
             render(leads);
           })

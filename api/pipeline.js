@@ -33,13 +33,15 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { dominio, estado } = req.body || {};
+      const { dominio, estado, motivo } = req.body || {};
       if (!dominio || !estado) { res.status(400).json({ error: 'Faltan dominio o estado.' }); return; }
       if (!OPCIONES_VALIDAS.includes(estado)) { res.status(400).json({ error: 'Estado no valido.' }); return; }
 
       const raw = await comandoKV(url, token, ['GET', KEY]);
       const mapa = raw ? JSON.parse(raw) : {};
-      mapa[dominio] = estado;
+      const anterior = mapa[dominio];
+      const motivoAnterior = (anterior && typeof anterior === 'object') ? (anterior.motivo || '') : '';
+      mapa[dominio] = { estado, motivo: motivo !== undefined ? motivo : motivoAnterior };
       await comandoKV(url, token, ['SET', KEY, JSON.stringify(mapa)]);
       res.status(200).json({ ok: true, mapa });
       return;
