@@ -181,7 +181,7 @@
 
   <div class="title-block">
     <div class="hero-pill"><span class="hero-pulse"></span>Radar de Leads · Reporte en vivo</div>
-    <h1 id="titulo">Radar de Leads Pautando — Reporte</h1>
+    <h1 id="titulo">Radar de Leads Pautando — <em>Reporte</em></h1>
     <div class="sub" id="subtitulo">Vista de solo lectura. Para buscar candidatos nuevos, asignar o generar guiones, usa la app interactiva en Claude.</div>
   </div>
   <div class="updated" id="updated"></div>
@@ -321,8 +321,14 @@
 
   const PIPELINE_OPCIONES = ['Lead', 'Reunión', 'Negociando', 'Ganado', 'Perdido'];
 
-  // Logo de cada agencia (archivos en sitio-vercel/logos/), pendiente de agregar
-  const AGENCIA_LOGOS = {};
+  // Logo de cada agencia (archivos en sitio-vercel/logos/)
+  const AGENCIA_LOGOS = {
+    'We Love Carts': 'logos/we-love-carts.png',
+    'Noos Consulting': 'logos/noos-consulting.png',
+    'Trest me': 'logos/trest-me.png',
+    'Reevolution': 'logos/reevolution.svg',
+    'Cocktail Marketing': 'logos/cocktail-marketing.png'
+  };
   const basePath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
 
   window.rlCambiarPipeline = function(select){
@@ -424,7 +430,7 @@
   let filtroAgenciaTabla = 'todas';
   window.rlFiltrarTabla = function(valor){
     filtroAgenciaTabla = valor;
-    renderTablaSeguimiento(window.__leads || []);
+    render(window.__leads || []); // tambien filtra el listado de cards, no solo la tabla
   };
 
   // Tabla de seguimiento tipo Excel: solo se muestra en la vista admin (sin token de agencia)
@@ -560,11 +566,12 @@
       return;
     }
 
-    if(leads.length === 0){
+    const leadsAMostrar = filtroAgenciaTabla === 'todas' ? leads : leads.filter(c => c.agencia_asignada === filtroAgenciaTabla);
+    if(leadsAMostrar.length === 0){
       cont.innerHTML = '<div class="empty">No hay leads en este reporte.</div>';
       return;
     }
-    cont.innerHTML = leads.map(cardHtml).join('');
+    cont.innerHTML = leadsAMostrar.map(cardHtml).join('');
   }
 
   fetch(basePath + 'leads.json?_=' + Date.now())
@@ -585,7 +592,7 @@
 
         const logoUrl = AGENCIA_LOGOS[agenciaFiltro];
         if(logoUrl){
-          document.getElementById('agencyLogoImg').src = logoUrl;
+          document.getElementById('agencyLogoImg').src = basePath + logoUrl;
           document.getElementById('agencyLogoImg').alt = agenciaFiltro;
           document.getElementById('agencyLogoWrap').style.display = 'flex';
         }
