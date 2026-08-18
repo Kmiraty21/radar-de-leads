@@ -90,6 +90,31 @@
   .empty { text-align: center; padding: 60px 20px; color: #6b7280; }
   .error { text-align: center; padding: 60px 20px; color: #ff8a8a; }
   footer { text-align: center; color: #4b5875; font-size: 11px; margin-top: 40px; }
+
+  /* ---- Tabla de seguimiento (solo vista admin) ---- */
+  .rl-track-title { font-size: 15px; font-weight: 800; color: #ffffff; margin: 40px 0 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .rl-track-title span.count { color: #9ca3af; font-weight: 600; font-size: 12.5px; margin-left: 8px; }
+  .rl-track-filtro {
+    background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.16); border-radius: 8px;
+    padding: 7px 12px; font-size: 12.5px; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer;
+  }
+  .rl-track-filtro option { color: #14213D; }
+  .rl-track-wrap {
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px;
+    overflow-x: auto; margin-bottom: 18px;
+  }
+  .rl-track-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 640px; }
+  .rl-track-table th {
+    text-align: left; padding: 12px 14px; color: #7db4ff; font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.1);
+    white-space: nowrap;
+  }
+  .rl-track-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #cbd2dc; vertical-align: top; }
+  .rl-track-table tr:last-child td { border-bottom: none; }
+  .rl-track-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .rl-track-brand { color: #ffffff; font-weight: 700; display: block; }
+  .rl-track-domain { color: #6b7280; font-size: 11px; }
+  .rl-track-empty { padding: 30px 24px; text-align: center; color: #6b7280; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -103,6 +128,8 @@
   <div class="updated" id="updated"></div>
 
   <div class="rl-table-wrap" id="lista"></div>
+
+  <div id="seguimiento"></div>
 
   <footer>Generado desde el Radar de Leads Pautando · Tiendanube Partners MX</footer>
 </div>
@@ -332,9 +359,55 @@
     return html;
   }
 
+  let filtroAgenciaTabla = 'todas';
+  window.rlFiltrarTabla = function(valor){
+    filtroAgenciaTabla = valor;
+    renderTablaSeguimiento(window.__leads || []);
+  };
+
+  // Tabla de seguimiento tipo Excel: solo se muestra en la vista admin (sin token de agencia)
+  function renderTablaSeguimiento(leads){
+    const cont = document.getElementById('seguimiento');
+    if(agenciaFiltro){ cont.innerHTML = ''; return; } // las agencias no ven esta tabla, solo su listado de cards
+
+    const todosAsignados = leads.filter(c => c.estado === 'Asignado');
+    if(todosAsignados.length === 0){
+      cont.innerHTML = '<div class="rl-track-title">Seguimiento de asignaciones</div><div class="rl-track-wrap"><div class="rl-track-empty">Todavia no hay leads asignados a ninguna agencia.</div></div>';
+      return;
+    }
+
+    const agenciasConLeads = [...new Set(todosAsignados.map(c => c.agencia_asignada))].sort();
+    const filtrados = filtroAgenciaTabla === 'todas' ? todosAsignados : todosAsignados.filter(c => c.agencia_asignada === filtroAgenciaTabla);
+
+    const selectorHtml = `<select class="rl-track-filtro" onchange="rlFiltrarTabla(this.value)">
+      <option value="todas" ${filtroAgenciaTabla==='todas'?'selected':''}>Todas las agencias (${todosAsignados.length})</option>
+      ${agenciasConLeads.map(a => `<option value="${a}" ${filtroAgenciaTabla===a?'selected':''}>${a} (${todosAsignados.filter(c=>c.agencia_asignada===a).length})</option>`).join('')}
+    </select>`;
+
+    const filasHtml = filtrados.map(c => `<tr>
+      <td><span class="rl-track-brand">${c.marca}</span><span class="rl-track-domain">${c.dominio}</span></td>
+      <td>${c.facturacion_estimada_mxn ? '$'+Number(c.facturacion_estimada_mxn).toLocaleString('es-MX')+' MXN' : '-'}</td>
+      <td>${c.agencia_asignada || '-'}</td>
+      <td>${badgePipeline(c.pipeline_status)}</td>
+      <td>${c.fecha_asignacion || '-'}</td>
+    </tr>`).join('');
+
+    cont.innerHTML = `<div class="rl-track-title">
+        <span>Seguimiento de asignaciones<span class="count">${filtrados.length} de ${todosAsignados.length} lead${todosAsignados.length!==1?'s':''}</span></span>
+        ${selectorHtml}
+      </div>
+      <div class="rl-track-wrap">
+        <table class="rl-track-table">
+          <thead><tr><th>Marca</th><th>Facturación est.</th><th>Agencia</th><th>Pipeline</th><th>Fecha asig.</th></tr></thead>
+          <tbody>${filasHtml}</tbody>
+        </table>
+      </div>`;
+  }
+
   function render(leads){
     const cont = document.getElementById('lista');
     const leadsAMostrar = agenciaFiltro ? leads.filter(c => c.agencia_asignada === agenciaFiltro) : leads;
+    renderTablaSeguimiento(leads);
     if(leadsAMostrar.length === 0){
       cont.innerHTML = '<div class="empty">' + (agenciaFiltro ? 'Todavia no tienes leads asignados.' : 'No hay leads en este reporte.') + '</div>';
       return;
@@ -412,16 +485,23 @@
       render(leads);
 
       // Aplica los status de pipeline guardados en Vercel KV (si los hay), sin bloquear el render inicial
-      fetch('/api/pipeline')
-        .then(r => r.ok ? r.json() : {})
-        .then(mapa => {
-          Object.keys(mapa || {}).forEach(dominio => {
-            const lead = leads.find(l => l.dominio === dominio);
-            if(lead) lead.pipeline_status = mapa[dominio];
-          });
-          render(leads);
-        })
-        .catch(err => console.warn('No se pudo cargar el status de pipeline guardado:', err.message));
+      function sincronizarPipelineStatus(){
+        return fetch('/api/pipeline')
+          .then(r => r.ok ? r.json() : {})
+          .then(mapa => {
+            Object.keys(mapa || {}).forEach(dominio => {
+              const lead = leads.find(l => l.dominio === dominio);
+              if(lead) lead.pipeline_status = mapa[dominio];
+            });
+            render(leads);
+          })
+          .catch(err => console.warn('No se pudo cargar el status de pipeline guardado:', err.message));
+      }
+      sincronizarPipelineStatus();
+
+      // En la vista admin, refresca solo cada 30s para que la tabla de seguimiento
+      // refleje los cambios que hagan las agencias desde sus propias paginas.
+      if(!agenciaFiltro) setInterval(sincronizarPipelineStatus, 30000);
     })
     .catch(err => {
       document.getElementById('lista').innerHTML = '<div class="error">No se pudo cargar leads.json (' + err.message + ')</div>';
