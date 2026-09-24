@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/scouting.js": {
+      "maxDuration": 60
+    }
+  }
+}

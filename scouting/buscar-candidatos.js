@@ -222,4 +222,4 @@ if (require.main === module) {
   main().catch(err => { console.error(err); process.exit(1); });
 }
 
-module.exports = { construirPrompt, extraerPrimerArrayJSON, construirLead, parsearArgs };
+module.exports = { construirPrompt, extraerPrimerArrayJSON, construirLead, parsearArgs, llamarClaudeConContinuacion };

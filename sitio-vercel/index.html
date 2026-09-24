@@ -161,6 +161,24 @@
   .rl-track-domain { color: #6b7280; font-size: 11px; }
   .rl-track-empty { padding: 30px 24px; text-align: center; color: #6b7280; font-size: 13px; }
 
+  /* ---- Panel de scouting (solo vista admin) ---- */
+  .rl-scouting {
+    background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-radius: 16px;
+    padding: 18px 20px; margin-bottom: 24px;
+  }
+  .rl-scouting-title { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+  .rl-scouting-help { font-size: 11.5px; color: #6b7280; margin-bottom: 14px; line-height: 1.5; }
+  .rl-scouting-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .rl-scouting-row input {
+    border: 1px solid rgba(255,255,255,0.16); border-radius: 100px; padding: 9px 16px; font-size: 12.5px;
+    font-family: 'JetBrains Mono', monospace; color: #ffffff; background: rgba(0,0,0,0.25); flex: 1; min-width: 160px;
+  }
+  .rl-scouting-row input::placeholder { color: #6b7280; }
+  .rl-scouting-row input[type="password"] { font-family: 'Plus Jakarta Sans', sans-serif; max-width: 140px; flex: 0 1 140px; }
+  .rl-scouting-msg { font-size: 12px; margin-top: 10px; }
+  .rl-scouting-msg.error { color: #ff9494; }
+  .rl-scouting-msg.ok { color: #6be3a0; }
+
   /* ---- Resumen de fases (vista de agencia) ---- */
   .rl-resumen { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; }
   .rl-chip {
@@ -197,9 +215,11 @@
   <div class="title-block">
     <div class="hero-pill"><span class="hero-pulse"></span>Radar de Leads · Reporte en vivo</div>
     <h1 id="titulo">Radar de Leads Pautando — <em>Reporte</em></h1>
-    <div class="sub" id="subtitulo">Vista de solo lectura. Para buscar candidatos nuevos, asignar o generar guiones, usa la app interactiva en Claude.</div>
+    <div class="sub" id="subtitulo">Vista de solo lectura. Para asignar o generar guiones, usa la app interactiva en Claude.</div>
   </div>
   <div class="updated" id="updated"></div>
+
+  <div id="scouting-panel"></div>
 
   <div id="seguimiento"></div>
 
@@ -649,6 +669,72 @@
     cont.innerHTML = leadsAMostrar.map(cardHtml).join('');
   }
 
+  function renderScoutingPanel(){
+    if(agenciaFiltro) return; // solo en la vista admin
+    document.getElementById('scouting-panel').innerHTML = `
+      <div class="rl-scouting">
+        <div class="rl-scouting-title">🔍 Buscar candidatos nuevos</div>
+        <div class="rl-scouting-help">3 dominios semilla del mismo giro que quieras prospectar. Esto llama a la API real de Anthropic (tiene costo) y puede tardar hasta un minuto.</div>
+        <div class="rl-scouting-row">
+          <input type="text" id="rl-seed-1" placeholder="dominio1.mx">
+          <input type="text" id="rl-seed-2" placeholder="dominio2.mx">
+          <input type="text" id="rl-seed-3" placeholder="dominio3.mx">
+          <input type="password" id="rl-scouting-pin" placeholder="PIN">
+        </div>
+        <button class="rl-btn" id="rl-scouting-btn" onclick="rlBuscarNuevo()">Buscar candidatos</button>
+        <div class="rl-scouting-msg" id="rl-scouting-msg"></div>
+      </div>`;
+  }
+
+  window.rlBuscarNuevo = function(){
+    const semillas = ['rl-seed-1','rl-seed-2','rl-seed-3']
+      .map(id => document.getElementById(id).value.trim())
+      .filter(Boolean);
+    const pin = document.getElementById('rl-scouting-pin').value;
+    const msg = document.getElementById('rl-scouting-msg');
+    const btn = document.getElementById('rl-scouting-btn');
+
+    if(semillas.length === 0){ msg.className = 'rl-scouting-msg error'; msg.textContent = 'Escribe al menos un dominio semilla.'; return; }
+    if(!pin){ msg.className = 'rl-scouting-msg error'; msg.textContent = 'Falta el PIN.'; return; }
+
+    btn.disabled = true;
+    msg.className = 'rl-scouting-msg';
+    msg.textContent = 'Investigando en la web... esto puede tardar hasta un minuto.';
+
+    fetch('/api/scouting', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': pin },
+      body: JSON.stringify({ semillas })
+    })
+      .then(r => r.json().then(data => { if(!r.ok) throw new Error(data.error || 'Error al buscar'); return data; }))
+      .then(data => {
+        msg.className = 'rl-scouting-msg ok';
+        msg.textContent = `Listo: ${data.agregados} candidato(s) agregado(s), ${data.descartados} descartado(s) por falta de contacto.`;
+        return sincronizarLeadsExtra();
+      })
+      .catch(err => {
+        msg.className = 'rl-scouting-msg error';
+        msg.textContent = 'No se pudo buscar: ' + err.message;
+      })
+      .finally(() => { btn.disabled = false; });
+  };
+
+  function sincronizarLeadsExtra(){
+    return fetch('/api/leads-extra')
+      .then(r => r.ok ? r.json() : [])
+      .then(extras => {
+        const leads = window.__leads || [];
+        const dominiosActuales = new Set(leads.map(l => l.dominio));
+        (extras || []).forEach(extra => {
+          if(dominiosActuales.has(extra.dominio)) return;
+          leads.push(extra);
+          dominiosActuales.add(extra.dominio);
+        });
+        render(leads);
+      })
+      .catch(err => console.warn('No se pudieron cargar los leads extra:', err.message));
+  }
+
   fetch(basePath + 'leads.json?_=' + Date.now())
     .then(r => {
       if(!r.ok) throw new Error('No se pudo cargar leads.json');
@@ -674,7 +760,9 @@
       }
 
       window.__leads = leads;
+      renderScoutingPanel();
       render(leads);
+      sincronizarLeadsExtra();
 
       // Aplica los status de pipeline guardados en Vercel KV (si los hay), sin bloquear el render inicial
       function sincronizarPipelineStatus(){
@@ -698,6 +786,7 @@
       // En la vista admin, refresca solo cada 30s para que la tabla de seguimiento
       // refleje los cambios que hagan las agencias desde sus propias paginas.
       if(!agenciaFiltro) setInterval(sincronizarPipelineStatus, 30000);
+      setInterval(sincronizarLeadsExtra, 30000);
     })
     .catch(err => {
       document.getElementById('lista').innerHTML = '<div class="error">No se pudo cargar leads.json (' + err.message + ')</div>';
