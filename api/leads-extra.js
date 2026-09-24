@@ -21,6 +21,14 @@ module.exports = async function handler(req, res) {
   if (!url || !token) { res.status(200).json([]); return; } // sin KV configurado, simplemente no hay extras todavia
 
   try {
+    if (req.method === 'DELETE') {
+      const adminKey = process.env.ADMIN_SCOUTING_KEY;
+      if (!adminKey || req.headers['x-admin-key'] !== adminKey) { res.status(401).json({ error: 'PIN incorrecto.' }); return; }
+      await comandoKV(url, token, ['DEL', KEY]);
+      res.status(200).json({ ok: true });
+      return;
+    }
+
     const raw = await comandoKV(url, token, ['GET', KEY]);
     res.status(200).json(raw ? JSON.parse(raw) : []);
   } catch (err) {

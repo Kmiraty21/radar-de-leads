@@ -682,9 +682,42 @@
           <input type="password" id="rl-scouting-pin" placeholder="PIN">
         </div>
         <button class="rl-btn" id="rl-scouting-btn" onclick="rlBuscarNuevo()">Buscar candidatos</button>
+        <button class="rl-btn" id="rl-reiniciar-btn" style="background:transparent; border:1px solid rgba(255,107,107,0.4); color:#ff9494;" onclick="rlReiniciarTodo()">Reiniciar todo (borrar leads y status)</button>
         <div class="rl-scouting-msg" id="rl-scouting-msg"></div>
       </div>`;
   }
+
+  let reiniciarArmado = false;
+  window.rlReiniciarTodo = function(){
+    const btn = document.getElementById('rl-reiniciar-btn');
+    const msg = document.getElementById('rl-scouting-msg');
+    if(!reiniciarArmado){
+      reiniciarArmado = true;
+      btn.textContent = '¿Seguro? Clic otra vez para borrar TODO';
+      setTimeout(() => { reiniciarArmado = false; if(btn) btn.textContent = 'Reiniciar todo (borrar leads y status)'; }, 4000);
+      return;
+    }
+    reiniciarArmado = false;
+    btn.textContent = 'Reiniciar todo (borrar leads y status)';
+
+    const pin = document.getElementById('rl-scouting-pin').value;
+    if(!pin){ msg.className = 'rl-scouting-msg error'; msg.textContent = 'Falta el PIN para reiniciar.'; return; }
+
+    btn.disabled = true;
+    Promise.all([
+      fetch('/api/pipeline', { method: 'DELETE', headers: { 'x-admin-key': pin } }).then(r => r.json().then(d => { if(!r.ok) throw new Error(d.error || 'Error borrando pipeline'); })),
+      fetch('/api/leads-extra', { method: 'DELETE', headers: { 'x-admin-key': pin } }).then(r => r.json().then(d => { if(!r.ok) throw new Error(d.error || 'Error borrando leads extra'); }))
+    ])
+      .then(() => {
+        msg.className = 'rl-scouting-msg ok';
+        msg.textContent = 'Listo, se reinicio el status guardado y los leads extra. Recarga la pagina cuando actualices leads.json.';
+      })
+      .catch(err => {
+        msg.className = 'rl-scouting-msg error';
+        msg.textContent = 'No se pudo reiniciar: ' + err.message;
+      })
+      .finally(() => { btn.disabled = false; });
+  };
 
   window.rlBuscarNuevo = function(){
     const semillas = ['rl-seed-1','rl-seed-2','rl-seed-3']

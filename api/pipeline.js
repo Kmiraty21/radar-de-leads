@@ -47,6 +47,14 @@ module.exports = async function handler(req, res) {
       return;
     }
 
+    if (req.method === 'DELETE') {
+      const adminKey = process.env.ADMIN_SCOUTING_KEY;
+      if (!adminKey || req.headers['x-admin-key'] !== adminKey) { res.status(401).json({ error: 'PIN incorrecto.' }); return; }
+      await comandoKV(url, token, ['DEL', KEY]);
+      res.status(200).json({ ok: true });
+      return;
+    }
+
     res.status(405).json({ error: 'Metodo no soportado.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
