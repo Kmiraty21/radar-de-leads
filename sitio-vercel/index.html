@@ -742,7 +742,7 @@
       .then(r => r.json().then(data => { if(!r.ok) throw new Error(data.error || 'Error al buscar'); return data; }))
       .then(data => {
         msg.className = 'rl-scouting-msg ok';
-        msg.textContent = `Listo: ${data.agregados} candidato(s) agregado(s), ${data.descartados} descartado(s) por falta de contacto.`;
+        msg.textContent = `Listo: ${data.agregados} candidato(s) agregado(s), ${data.descartados} descartado(s) por falta de contacto${data.mejorados ? `, ${data.mejorados} contacto(s) mejorado(s) con Lusha` : ''}.`;
         return sincronizarLeadsExtra();
       })
       .catch(err => {

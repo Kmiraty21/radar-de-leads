@@ -7,9 +7,9 @@
 //   ANTHROPIC_API_KEY   - la key de pago (la misma que se usa por CLI)
 //   ADMIN_SCOUTING_KEY  - un PIN que solo Koresma conoce, para poder usar el boton
 // Opcionales:
-//   SEMRUSH_MCP_TOKEN, EXPLORIUM_MCP_TOKEN
+//   SEMRUSH_MCP_TOKEN, EXPLORIUM_MCP_TOKEN, LUSHA_API_KEY (mejora contactos genericos)
 
-const { construirPrompt, extraerPrimerArrayJSON, construirLead, llamarClaudeConContinuacion } = require('../scouting/buscar-candidatos.js');
+const { construirPrompt, extraerPrimerArrayJSON, construirLead, llamarClaudeConContinuacion, enriquecerContactoLusha } = require('../scouting/buscar-candidatos.js');
 
 const KEY = 'radar_leads_extra';
 const AGENCIAS = ['We Love Carts', 'Noos Consulting', 'Trest me', 'Reevolution', 'Cocktail Marketing'];
@@ -62,7 +62,8 @@ module.exports = async function handler(req, res) {
     const existentes = raw ? JSON.parse(raw) : [];
     const dominiosExistentes = new Set(existentes.map(l => l.dominio));
 
-    let agregados = 0, descartados = 0;
+    const lushaKey = process.env.LUSHA_API_KEY || null;
+    let agregados = 0, descartados = 0, mejorados = 0;
     const fecha = new Date().toISOString().split('T')[0];
     let indiceAgencia = existentes.length;
 
@@ -71,6 +72,11 @@ module.exports = async function handler(req, res) {
       if (!resultado) continue;
       if (resultado.descartado) { descartados++; continue; }
       if (dominiosExistentes.has(resultado.lead.dominio)) continue;
+
+      if (lushaKey && !resultado.lead.contacto_nombre) {
+        const mejora = await enriquecerContactoLusha(resultado.lead.dominio, lushaKey);
+        if (mejora && mejora.contacto_nombre) { Object.assign(resultado.lead, mejora); mejorados++; }
+      }
 
       resultado.lead.estado = 'Asignado';
       resultado.lead.agencia_asignada = AGENCIAS[indiceAgencia % 5];
@@ -83,7 +89,7 @@ module.exports = async function handler(req, res) {
     }
 
     await comandoKV(kvUrl, kvToken, ['SET', KEY, JSON.stringify(existentes)]);
-    res.status(200).json({ ok: true, agregados, descartados });
+    res.status(200).json({ ok: true, agregados, descartados, mejorados });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
